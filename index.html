@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lewis Pinkston — Game Developer & CS Professional. Python, Java, C++, Godot 4.">
+  <title>Lewis Pinkston — Game Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    :root {
+      --bg:#050010; --bg-card:rgba(10,0,30,.9);
+      --gold:#d4a843; --gold-l:#f5d06e; --gold-dim:rgba(212,168,67,.12);
+      --pur:#7c3aed; --pur-l:#a78bfa; --pur-dim:rgba(124,58,237,.12);
+      --red:#dc2626; --green:#10b981; --teal:#06b6d4;
+      --txt:#f0ebff; --txt2:#b8a9d4; --bdr:rgba(167,139,250,.18);
+      --glow-g:0 0 28px rgba(212,168,67,.45); --glow-p:0 0 28px rgba(124,58,237,.45);
+    }
+    body { background:var(--bg); color:var(--txt); font-family:'Rajdhani',sans-serif; font-size:16px; line-height:1.6; overflow-x:hidden; cursor:none; }
+    @media(hover:none){ body{cursor:auto} .cursor-dot,.cursor-ring{display:none} }
+    ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--pur);border-radius:3px}
+    .container{max-width:1200px;margin:0 auto;padding:0 2rem}
+    section{position:relative;z-index:1}
+
+    /* ── CURSOR ── */
+    .cursor-dot{position:fixed;width:8px;height:8px;background:var(--gold-l);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+    .cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(212,168,67,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s,border-color .15s}
+    .cursor-ring.hov{transform:translate(-50%,-50%) scale(1.8);border-color:var(--gold)}
+
+    /* ── LOADER ── */
+    #loader{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s,visibility .9s}
+    #loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+    .ld-glyph{font-size:5rem;animation:glowPulse 1.4s ease-in-out infinite alternate;filter:drop-shadow(0 0 30px rgba(212,168,67,.8));margin-bottom:1.5rem}
+    .ld-txt{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.45em;text-transform:uppercase;color:var(--txt2);animation:breathe 1.6s ease-in-out infinite}
+    .ld-bar{width:220px;height:2px;background:rgba(255,255,255,.06);margin-top:2rem;overflow:hidden;position:relative}
+    .ld-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:sweep 1.4s ease-in-out infinite}
+
+    /* ── BG ── */
+    #bgc{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+    /* ── NAV ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 0;transition:all .35s}
+    nav.stuck{padding:.8rem 0;background:rgba(5,0,16,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:2rem}
+    .nav-logo{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold);text-decoration:none;text-shadow:var(--glow-g)}
+    .nav-links{display:flex;gap:2.5rem;list-style:none}
+    .nav-links a{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);text-decoration:none;transition:color .25s,text-shadow .25s}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold);text-shadow:var(--glow-g)}
+    .nav-cta{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(212,168,67,.5);padding:.5rem 1.4rem;text-decoration:none;transition:all .3s;flex-shrink:0}
+    .nav-cta:hover{background:var(--gold-dim);box-shadow:var(--glow-g)}
+    .nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+    .nav-burger span{display:block;width:22px;height:2px;background:var(--gold);transition:all .3s}
+
+    /* ── HERO ── */
+    #hero{min-height:100vh;display:flex;align-items:center;padding:9rem 0 5rem;overflow:hidden;position:relative}
+    .hero-content{position:relative;z-index:2;max-width:680px}
+    .hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem 1.1rem;margin-bottom:2rem;border:1px solid rgba(212,168,67,.3);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;animation:riseIn .8s ease both}
+    .hero-badge::before{content:'✦';font-size:.6rem}
+    .hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(3rem,9vw,7rem);font-weight:900;line-height:.95;letter-spacing:-.02em;margin-bottom:1rem;animation:riseIn .8s .15s ease both}
+    .hero-title .ln1{display:block;color:var(--txt)}
+    .hero-title .ln2{display:block;color:var(--gold);text-shadow:var(--glow-g),0 0 80px rgba(212,168,67,.25)}
+    .hero-role{font-family:'Cinzel',serif;font-size:clamp(.9rem,2.2vw,1.2rem);color:var(--pur-l);letter-spacing:.3em;text-transform:uppercase;margin-bottom:1.5rem;animation:riseIn .8s .3s ease both}
+    .hero-tagline{font-size:1.12rem;color:var(--txt2);line-height:1.8;max-width:560px;margin-bottom:2.8rem;animation:riseIn .8s .45s ease both}
+    #typed{color:var(--pur-l);border-right:2px solid var(--pur-l);padding-right:2px}
+    .hero-btns{display:flex;gap:1.2rem;flex-wrap:wrap;animation:riseIn .8s .6s ease both}
+    .btn-pri,.btn-sec{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;text-decoration:none;cursor:pointer;border:none;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;transition:all .3s;position:relative;overflow:hidden}
+    .btn-pri{background:linear-gradient(135deg,var(--pur),#5b21b6);color:#fff}
+    .btn-pri::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);transform:translateX(-100%);transition:transform .3s}
+    .btn-pri:hover::before{transform:translateX(0)}
+    .btn-pri:hover{box-shadow:var(--glow-p),0 10px 35px rgba(124,58,237,.45);transform:translateY(-3px)}
+    .btn-sec{border:1px solid var(--bdr);color:var(--txt2)}
+    .btn-sec:hover{border-color:var(--gold);color:var(--gold);box-shadow:var(--glow-g);transform:translateY(-3px)}
+    .hero-stats{display:flex;gap:3.5rem;margin-top:4.5rem;padding-top:2.5rem;border-top:1px solid var(--bdr);flex-wrap:wrap;animation:riseIn .8s .75s ease both}
+    .stat-num{font-family:'Cinzel Decorative',serif;font-size:2.6rem;color:var(--gold);text-shadow:var(--glow-g);line-height:1}
+    .stat-lbl{font-size:.78rem;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-top:.3rem}
+    .hero-deco{position:absolute;right:3%;top:50%;transform:translateY(-50%);z-index:1;pointer-events:none}
+    .hero-orb-wrap{animation:floatBob 7s ease-in-out infinite}
+    .hero-orb{width:clamp(240px,28vw,400px);height:clamp(240px,28vw,400px);border-radius:50% 50% 42% 42%;border:1px solid rgba(212,168,67,.15);display:flex;align-items:center;justify-content:center;position:relative}
+    .hero-orb::before,.hero-orb::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(212,168,67,.08);animation:spinSlow 25s linear infinite}
+    .hero-orb::before{inset:-18px} .hero-orb::after{inset:-36px;animation-direction:reverse;animation-duration:38s}
+    .hero-orb-icon{font-size:clamp(5rem,10vw,8.5rem);filter:drop-shadow(0 0 35px rgba(212,168,67,.55));animation:floatBob 5s ease-in-out infinite alternate}
+    .scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;color:var(--txt2);font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;animation:riseIn 1s 1.5s ease both}
+    .scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollDown 2s ease-in-out infinite}
+
+    /* ── SECTION SHELL ── */
+    .sec-hd{text-align:center;margin-bottom:4.5rem}
+    .sec-eyebrow{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:.9rem}
+    .sec-eyebrow::before,.sec-eyebrow::after{content:'';flex:0 0 2.5rem;height:1px;background:linear-gradient(to right,transparent,var(--gold))}
+    .sec-eyebrow::after{background:linear-gradient(to left,transparent,var(--gold))}
+    .sec-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.4rem);line-height:1.15;color:var(--txt)}
+    .sec-title span{color:var(--gold);text-shadow:var(--glow-g)}
+    .sec-sub{margin-top:.9rem;color:var(--txt2);font-size:1.05rem;max-width:580px;margin-inline:auto}
+    .ornament{display:flex;align-items:center;justify-content:center;gap:1rem;margin:6rem 0}
+    .ornament::before,.ornament::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--bdr))}
+    .ornament::after{background:linear-gradient(to left,transparent,var(--bdr))}
+    .ornament-glyph{color:var(--gold);font-size:1.1rem;opacity:.5;letter-spacing:.8rem}
+
+    /* ── ABOUT ── */
+    #about{padding:8rem 0}
+    .about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:6rem;align-items:center}
+    .photo-frame{position:relative;max-width:340px;aspect-ratio:3/4;margin:0 auto}
+    .photo-frame::before{content:'';position:absolute;inset:-2px;z-index:-1;background:linear-gradient(135deg,var(--gold),var(--pur),var(--gold))}
+    .photo-frame::after{content:'';position:absolute;top:16px;right:-16px;bottom:-16px;left:16px;z-index:-2;border:1px solid rgba(212,168,67,.25)}
+    .photo-bg{width:100%;height:100%;background:linear-gradient(160deg,#16004a,#0a0028,#200060);display:flex;align-items:center;justify-content:center;font-size:7rem;position:relative;overflow:hidden}
+    .photo-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(5,0,16,.7),transparent 60%)}
+    .photo-stat{position:absolute;bottom:-1.4rem;right:-1.4rem;background:linear-gradient(135deg,var(--pur),#4c1d95);border:1px solid rgba(167,139,250,.3);padding:.9rem 1.4rem}
+    .photo-stat-n{font-family:'Cinzel Decorative',serif;font-size:2rem;color:var(--gold);line-height:1}
+    .photo-stat-l{font-size:.72rem;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem}
+    .about-text h3{font-family:'Cinzel',serif;font-size:clamp(1.3rem,2.5vw,1.85rem);color:var(--txt);margin-bottom:1.4rem;line-height:1.35}
+    .about-text h3 span{color:var(--gold)}
+    .about-text p{color:var(--txt2);line-height:1.85;margin-bottom:1.4rem;font-size:1.05rem}
+    .about-text p strong{color:var(--pur-l);font-weight:600}
+    .about-text p em{color:var(--gold)}
+    .tag-cloud{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.8rem 0}
+    .tag{padding:.3rem .9rem;border:1px solid rgba(167,139,250,.22);background:var(--pur-dim);color:var(--pur-l);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.06em;transition:all .25s;cursor:default}
+    .tag:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+    .social-row{display:flex;gap:1.4rem;margin-top:1.8rem;flex-wrap:wrap}
+    .social-link{display:flex;align-items:center;gap:.45rem;color:var(--txt2);text-decoration:none;font-size:.88rem;letter-spacing:.05em;transition:color .25s}
+    .social-link:hover{color:var(--gold)}
+    .social-link svg{width:16px;height:16px;fill:currentColor}
+
+    /* ── SKILLS ── */
+    #skills{padding:8rem 0;background:linear-gradient(180deg,transparent,rgba(124,58,237,.03),transparent)}
+    .skill-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.8rem;margin-bottom:4rem}
+    .skill-cat{background:var(--bg-card);border:1px solid var(--bdr);padding:2.4rem;position:relative;overflow:hidden;transition:border-color .3s}
+    .skill-cat::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--gold),var(--pur))}
+    .skill-cat:hover{border-color:rgba(212,168,67,.3)}
+    .skill-cat-hd{font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.7rem;margin-bottom:2rem}
+    .skill-cat-hd span{font-size:1.3rem}
+    .skill-item{margin-bottom:1.4rem}
+    .skill-meta{display:flex;justify-content:space-between;margin-bottom:.45rem}
+    .skill-name{font-size:.9rem;color:var(--txt);letter-spacing:.04em}
+    .skill-pct{font-family:'Cinzel',serif;font-size:.78rem;color:var(--txt2)}
+    .skill-track{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+    .skill-fill{height:100%;width:0;border-radius:2px;background:linear-gradient(90deg,var(--pur),var(--gold));transition:width 1.6s cubic-bezier(.4,0,.2,1);position:relative}
+    .skill-fill::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:7px;height:7px;background:var(--gold);border-radius:50%;box-shadow:0 0 8px var(--gold)}
+    .tech-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:1rem}
+    .tech-chip{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1.1rem .5rem;border:1px solid var(--bdr);background:var(--bg-card);transition:all .3s;cursor:default}
+    .tech-chip:hover{border-color:var(--gold);box-shadow:var(--glow-g);transform:translateY(-5px)}
+    .tc-icon{font-size:1.9rem} .tc-name{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--txt2);text-align:center}
+
+    /* ── PROJECTS ── */
+    #projects{padding:8rem 0}
+    .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.8rem}
+    .proj-card{background:var(--bg-card);border:1px solid var(--bdr);overflow:hidden;transition:all .4s;position:relative}
+    .proj-card:hover{border-color:rgba(212,168,67,.4);transform:translateY(-8px);box-shadow:0 24px 60px rgba(0,0,0,.5),var(--glow-g)}
+    .proj-thumb{height:215px;position:relative;overflow:hidden}
+    .proj-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .proj-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(5,0,16,.92) 0%,rgba(5,0,16,.15) 55%,transparent);pointer-events:none}
+    .proj-badge{position:absolute;top:1rem;right:1rem;z-index:2;padding:.22rem .7rem;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+    .badge-shipped{background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.4);color:#34d399}
+    .badge-beta{background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.4);color:#fbbf24}
+    .badge-wip{background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.4);color:var(--pur-l)}
+    .proj-info{padding:1.6rem}
+    .proj-genre{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+    .proj-title{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--txt);margin-bottom:.9rem;line-height:1.25}
+    .proj-desc{color:var(--txt2);font-size:.92rem;line-height:1.75;margin-bottom:1.3rem}
+    .proj-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.2rem}
+    .proj-tag{padding:.18rem .55rem;background:var(--pur-dim);border:1px solid rgba(167,139,250,.2);font-size:.7rem;color:var(--pur-l);letter-spacing:.04em}
+    .proj-links{display:flex;gap:1.2rem}
+    .proj-link{display:inline-flex;align-items:center;gap:.35rem;color:var(--txt2);text-decoration:none;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.05em;transition:color .25s}
+    .proj-link:hover{color:var(--gold)}
+    .proj-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}
+    .proj-card.featured .proj-thumb{height:100%;min-height:280px}
+    .proj-card.featured .proj-info{padding:3rem;display:flex;flex-direction:column;justify-content:center}
+    .proj-card.featured .proj-title{font-size:1.75rem}
+    .feat-ribbon{display:inline-flex;align-items:center;gap:.45rem;width:fit-content;padding:.25rem .9rem;margin-bottom:.9rem;background:var(--gold-dim);border:1px solid rgba(212,168,67,.3);color:var(--gold);font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase}
+
+    /* ── EXPERIENCE ── */
+    #experience{padding:6rem 0}
+    .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem}
+    .exp-card{background:var(--bg-card);border:1px solid var(--bdr);padding:2.2rem;position:relative;overflow:hidden;transition:border-color .3s}
+    .exp-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(to right,var(--gold),var(--pur))}
+    .exp-card:hover{border-color:rgba(212,168,67,.3)}
+    .exp-period{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem}
+    .exp-role{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--txt);margin-bottom:.3rem}
+    .exp-company{font-size:.88rem;color:var(--pur-l);margin-bottom:1.2rem;letter-spacing:.04em}
+    .exp-bullets{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+    .exp-bullets li{font-size:.88rem;color:var(--txt2);padding-left:1rem;position:relative;line-height:1.6}
+    .exp-bullets li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:.7rem}
+    .cert-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+    .cert{padding:.25rem .7rem;border:1px solid rgba(212,168,67,.3);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.08em}
+
+    /* ── WIP ── */
+    #wip{padding:2rem 0 6rem}
+    .wip-card{background:var(--bg-card);border:1px solid var(--bdr);padding:3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;position:relative;overflow:hidden;transition:border-color .3s}
+    .wip-card:hover{border-color:rgba(212,168,67,.3)}
+    .wip-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(to bottom,var(--pur),var(--gold))}
+    .wip-pulse{display:inline-flex;align-items:center;gap:.5rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:.9rem}
+    .wip-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulseDot 1.6s ease-in-out infinite;box-shadow:0 0 8px var(--green)}
+    .wip-title{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--txt);margin-bottom:.7rem}
+    .wip-desc{color:var(--txt2);font-size:.98rem;line-height:1.75;margin-bottom:1.5rem}
+    .wip-bar-label{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.1em;color:var(--txt2);margin-bottom:.5rem;text-transform:uppercase}
+    .wip-track{width:100%;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+    .wip-fill{height:100%;background:linear-gradient(90deg,var(--pur),var(--gold));border-radius:3px;position:relative;transition:width 1.5s .3s cubic-bezier(.4,0,.2,1)}
+    .wip-fill::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:9px;height:9px;background:var(--gold);border-radius:50%;box-shadow:0 0 10px var(--gold)}
+    .wip-pct{font-family:'Cinzel Decorative',serif;font-size:2.5rem;color:var(--gold);text-shadow:var(--glow-g);white-space:nowrap}
+    .wip-pct-lbl{font-size:.7rem;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase}
+
+    /* ── ACHIEVEMENTS ── */
+    #achievements{padding:8rem 0;background:linear-gradient(180deg,transparent,rgba(212,168,67,.02),transparent)}
+    .ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem}
+    .ach-card{background:var(--bg-card);border:1px solid var(--bdr);padding:2.4rem;text-align:center;transition:all .35s;position:relative;overflow:hidden}
+    .ach-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(212,168,67,.06),transparent);opacity:0;transition:opacity .35s}
+    .ach-card:hover{border-color:rgba(212,168,67,.3);transform:translateY(-5px)}
+    .ach-card:hover::after{opacity:1}
+    .ach-icon{font-size:2.8rem;margin-bottom:.9rem}
+    .ach-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--txt);margin-bottom:.7rem;line-height:1.3}
+    .ach-desc{color:var(--txt2);font-size:.88rem;line-height:1.75}
+    .ach-year{display:inline-block;margin-top:.9rem;font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);letter-spacing:.14em}
+
+    /* ── CONTACT ── */
+    #contact{padding:8rem 0}
+    .contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:6rem;align-items:start}
+    .contact-lead h3{font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,3vw,2.1rem);color:var(--txt);line-height:1.3;margin-bottom:1.3rem}
+    .contact-lead h3 span{color:var(--gold)}
+    .contact-lead p{color:var(--txt2);line-height:1.85;margin-bottom:2.5rem}
+    .contact-items{display:flex;flex-direction:column;gap:1.4rem}
+    .c-item{display:flex;align-items:center;gap:1rem}
+    .c-icon{width:44px;height:44px;flex-shrink:0;background:var(--pur-dim);border:1px solid rgba(167,139,250,.2);display:flex;align-items:center;justify-content:center;font-size:1.15rem}
+    .c-label{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2)}
+    .c-val{color:var(--txt);margin-top:.15rem;font-size:.95rem}
+    .c-val.avail{color:var(--green)}
+    .cf{background:var(--bg-card);border:1px solid var(--bdr);padding:2.8rem}
+    .cf-group{margin-bottom:1.4rem}
+    .cf-label{display:block;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:.5rem}
+    .cf-input,.cf-textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--bdr);color:var(--txt);padding:.75rem 1rem;font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;resize:none;transition:border-color .25s,box-shadow .25s}
+    .cf-input:focus,.cf-textarea:focus{border-color:var(--pur-l);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+    .cf-textarea{height:120px}
+    .cf-submit{width:100%;padding:1rem;background:linear-gradient(135deg,var(--pur),#5b21b6);color:#fff;border:none;font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+    .cf-submit:hover{box-shadow:var(--glow-p);transform:translateY(-2px)}
+    .cf-submit:disabled{opacity:.7;transform:none;cursor:default}
+
+    /* ── FOOTER ── */
+    footer{border-top:1px solid var(--bdr);padding:3.5rem 0;text-align:center;position:relative;z-index:1}
+    .foot-logo{font-family:'Cinzel Decorative',serif;font-size:1.5rem;color:var(--gold);text-shadow:var(--glow-g);margin-bottom:1rem}
+    .foot-nav{display:flex;justify-content:center;gap:2.5rem;list-style:none;margin-bottom:2rem;flex-wrap:wrap}
+    .foot-nav a{color:var(--txt2);text-decoration:none;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
+    .foot-nav a:hover{color:var(--gold)}
+    .foot-socials{display:flex;justify-content:center;gap:.8rem;margin-bottom:2rem}
+    .foot-soc{width:40px;height:40px;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--txt2);text-decoration:none;font-size:.9rem;font-family:'Cinzel',serif;font-weight:700;transition:all .3s}
+    .foot-soc:hover{border-color:var(--gold);color:var(--gold);box-shadow:var(--glow-g)}
+    .foot-copy{color:var(--txt2);font-size:.78rem;letter-spacing:.04em}
+    .foot-copy span{color:var(--gold)}
+
+    /* ── KEYFRAMES ── */
+    @keyframes riseIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+    @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes scrollDown{0%,100%{opacity:.25;height:38px}50%{opacity:1;height:52px}}
+    @keyframes glowPulse{from{filter:drop-shadow(0 0 15px rgba(212,168,67,.4))}to{filter:drop-shadow(0 0 50px rgba(212,168,67,.9))}}
+    @keyframes breathe{0%,100%{opacity:.4}50%{opacity:1}}
+    @keyframes sweep{0%{left:-100%}100%{left:100%}}
+    @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.3}}
+
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .about-grid,.contact-grid{grid-template-columns:1fr;gap:3.5rem}
+      .proj-card.featured{grid-template-columns:1fr}
+      .proj-card.featured .proj-thumb{min-height:220px}
+      .ach-grid,.exp-grid{grid-template-columns:repeat(2,1fr)}
+      .hero-deco{display:none}
+      .wip-card{grid-template-columns:1fr;gap:2rem}
+    }
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .nav-links.open{display:flex;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(5,0,16,.97);gap:2.5rem;z-index:999}
+      .nav-links.open a{font-size:1.1rem}
+      .nav-burger{display:flex}.nav-cta{display:none}
+      .hero-stats{gap:2rem}
+      .skill-grid,.ach-grid,.exp-grid{grid-template-columns:1fr}
+      .proj-grid{grid-template-columns:1fr}
+      .hero-btns{flex-direction:column}
+      .btn-pri,.btn-sec{justify-content:center}
+      .photo-frame{max-width:260px}
+    }
+    /* ── GAME MODAL ── */
+    .game-modal{position:fixed;inset:0;z-index:99999;background:rgba(0,0,8,.94);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:1rem;opacity:0;transition:opacity .3s}
+    .game-modal.open{opacity:1}
+    .game-modal-inner{display:flex;flex-direction:column;align-items:center;width:100%;max-width:960px;gap:.5rem}
+    .game-modal-header{display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:.6rem}
+    .game-modal-title{font-family:'Cinzel Decorative',serif;font-size:clamp(.85rem,2.5vw,1.1rem);color:var(--gold);text-shadow:var(--glow-g)}
+    .game-modal-hint{font-family:'Rajdhani',sans-serif;font-size:.78rem;color:var(--txt2);opacity:.75;letter-spacing:.06em}
+    .game-modal-close{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);border:1px solid var(--bdr);padding:.4rem 1.1rem;cursor:pointer;background:none;transition:all .25s;flex-shrink:0}
+    .game-modal-close:hover{border-color:#dc2626;color:#dc2626}
+    #gameCanvas{display:block;border:1px solid var(--bdr);background:#000;max-width:100%;outline:none;cursor:none;box-shadow:0 0 50px rgba(124,58,237,.3)}
+    .game-modal-footer{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:rgba(180,160,220,.35);letter-spacing:.06em}
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-glyph">⚔️</div>
+  <p class="ld-txt">Initialising Portfolio</p>
+  <div class="ld-bar"></div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="cdot"></div>
+<div class="cursor-ring" id="cring"></div>
+
+<!-- BG CANVAS -->
+<canvas id="bgc"></canvas>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">LP</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="mailto:ohiotre1@gmail.com?subject=CV%20Request%20%E2%80%94%20Lewis%20Pinkston&body=Hi%20Lewis%2C%20I%20came%20across%20your%20portfolio%20and%20would%20like%20a%20copy%20of%20your%20CV." class="nav-cta">Download CV</a>
+      <button class="nav-burger" id="burger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">Available for Hire · Columbus, Ohio</div>
+      <h1 class="hero-title">
+        <span class="ln1">Lewis</span>
+        <span class="ln2">Pinkston</span>
+      </h1>
+      <p class="hero-role">Game Developer &amp; CS Professional</p>
+      <p class="hero-tagline">
+        I build immersive game worlds using<br>
+        <span id="typed"></span>
+      </p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-pri">View My Games &nbsp;→</a>
+        <a href="#contact"  class="btn-sec">Let's Collaborate</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num" data-count="8">0</div><div class="stat-lbl">Games Built</div></div>
+        <div><div class="stat-num" data-count="4">0</div><div class="stat-lbl">Languages</div></div>
+        <div><div class="stat-num" data-count="3">0</div><div class="stat-lbl">Years Coding</div></div>
+        <div><div class="stat-num">2</div><div class="stat-lbl">Certifications</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-deco">
+    <div class="hero-orb-wrap">
+      <div class="hero-orb"><div class="hero-orb-icon">🎮</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="photo-frame"><div class="photo-bg">🧙‍♂️</div></div>
+        <div class="photo-stat"><div class="photo-stat-n">A+</div><div class="photo-stat-l">CompTIA Certified</div></div>
+      </div>
+      <div class="about-text reveal">
+        <h3>A technical mind building <span>worlds worth exploring</span></h3>
+        <p>I'm Lewis Pinkston — a Computer Science student at the University of Phoenix and CompTIA A+ / CCNA certified IT professional who pivoted into game development. After years of systematic debugging, data analysis, and supporting 300+ end users, I channel that same technical precision into crafting games with <strong>Python, Java, C++, and Godot 4</strong>.</p>
+        <p>My IT background gives me an edge most game devs don't have — <em>I treat every bug like a system fault</em>, every frame drop like a performance log anomaly. Clean code, solid documentation, and reliable systems are second nature.</p>
+        <p>When I'm not shipping builds, I'm dissecting game mechanics, reading GDC postmortems, and pushing my procedural generation and AI systems further.</p>
+        <div class="tag-cloud">
+          <span class="tag">Godot 4</span><span class="tag">GDScript</span>
+          <span class="tag">Python</span><span class="tag">Java</span><span class="tag">C++</span>
+          <span class="tag">CompTIA A+</span><span class="tag">CCNA</span>
+          <span class="tag">AI Systems</span><span class="tag">Proc Gen</span>
+          <span class="tag">Technical Docs</span><span class="tag">Linux</span>
+        </div>
+        <div class="social-row">
+          <a href="https://github.com" class="social-link" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub
+          </a>
+          <a href="https://itch.io" class="social-link" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M3.13 1.338C2.08 1.96.02 4.328 0 4.95v1.03C0 7.28 1.22 8.43 2.325 8.43c1.33 0 2.436-1.1 2.436-2.41 0 1.31 1.07 2.41 2.4 2.41 1.33 0 2.36-1.1 2.36-2.41 0 1.31 1.1 2.41 2.43 2.41h.06c1.33 0 2.43-1.1 2.43-2.41 0 1.31 1.03 2.41 2.36 2.41 1.33 0 2.4-1.1 2.4-2.41 0 1.31 1.1 2.41 2.43 2.41C22.78 8.43 24 7.28 24 5.98V4.95c-.02-.62-2.08-2.99-3.13-3.612C19.4.633 12.7.15 12 .15c-.7 0-7.4.483-8.87 1.188z"/></svg>Itch.io
+          </a>
+          <a href="https://linkedin.com" class="social-link" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament container"><span class="ornament-glyph">✦  ✦  ✦</span></div>
+
+<!-- ══════════ SKILLS ══════════ -->
+<section id="skills">
+  <div class="container">
+    <div class="sec-hd reveal">
+      <div class="sec-eyebrow">Expertise</div>
+      <h2 class="sec-title">Forged <span>Skill Set</span></h2>
+      <p class="sec-sub">Technical depth from IT + Computer Science, applied to game development</p>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-cat reveal">
+        <div class="skill-cat-hd"><span>⚙️</span> Engine &amp; Languages</div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">GDScript / Godot 4</span><span class="skill-pct">88%</span></div><div class="skill-track"><div class="skill-fill" data-w="88"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Python</span><span class="skill-pct">82%</span></div><div class="skill-track"><div class="skill-fill" data-w="82"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Java</span><span class="skill-pct">75%</span></div><div class="skill-track"><div class="skill-fill" data-w="75"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">C++</span><span class="skill-pct">65%</span></div><div class="skill-track"><div class="skill-fill" data-w="65"></div></div></div>
+      </div>
+      <div class="skill-cat reveal d1">
+        <div class="skill-cat-hd"><span>🎲</span> Game Systems</div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Systems Design</span><span class="skill-pct">84%</span></div><div class="skill-track"><div class="skill-fill" data-w="84"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">NPC / AI Systems</span><span class="skill-pct">75%</span></div><div class="skill-track"><div class="skill-fill" data-w="75"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Procedural Generation</span><span class="skill-pct">68%</span></div><div class="skill-track"><div class="skill-fill" data-w="68"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Level Design</span><span class="skill-pct">72%</span></div><div class="skill-track"><div class="skill-fill" data-w="72"></div></div></div>
+      </div>
+      <div class="skill-cat reveal d2">
+        <div class="skill-cat-hd"><span>🔧</span> Technical &amp; IT</div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">System Analysis &amp; Debugging</span><span class="skill-pct">92%</span></div><div class="skill-track"><div class="skill-fill" data-w="92"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Technical Documentation</span><span class="skill-pct">90%</span></div><div class="skill-track"><div class="skill-fill" data-w="90"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Networking (LAN/WAN)</span><span class="skill-pct">82%</span></div><div class="skill-track"><div class="skill-fill" data-w="82"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">QA &amp; Testing</span><span class="skill-pct">85%</span></div><div class="skill-track"><div class="skill-fill" data-w="85"></div></div></div>
+      </div>
+      <div class="skill-cat reveal d3">
+        <div class="skill-cat-hd"><span>🎨</span> Art &amp; UI</div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">UI / UX Design</span><span class="skill-pct">74%</span></div><div class="skill-track"><div class="skill-fill" data-w="74"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">GLSL Shaders</span><span class="skill-pct">60%</span></div><div class="skill-track"><div class="skill-fill" data-w="60"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Sprite Animation</span><span class="skill-pct">65%</span></div><div class="skill-track"><div class="skill-fill" data-w="65"></div></div></div>
+        <div class="skill-item"><div class="skill-meta"><span class="skill-name">Sound Integration</span><span class="skill-pct">58%</span></div><div class="skill-track"><div class="skill-fill" data-w="58"></div></div></div>
+      </div>
+    </div>
+    <div class="sec-hd reveal" style="margin-top:3rem;margin-bottom:1.8rem;"><div class="sec-eyebrow">Technologies</div></div>
+    <div class="tech-row reveal">
+      <div class="tech-chip"><div class="tc-icon">🎮</div><div class="tc-name">Godot 4</div></div>
+      <div class="tech-chip"><div class="tc-icon">🐍</div><div class="tc-name">Python</div></div>
+      <div class="tech-chip"><div class="tc-icon">☕</div><div class="tc-name">Java</div></div>
+      <div class="tech-chip"><div class="tc-icon">⚡</div><div class="tc-name">C++</div></div>
+      <div class="tech-chip"><div class="tc-icon">🔧</div><div class="tc-name">Git</div></div>
+      <div class="tech-chip"><div class="tc-icon">🐧</div><div class="tc-name">Linux</div></div>
+      <div class="tech-chip"><div class="tc-icon">🖥️</div><div class="tc-name">Windows</div></div>
+      <div class="tech-chip"><div class="tc-icon">🌐</div><div class="tc-name">Networking</div></div>
+      <div class="tech-chip"><div class="tc-icon">🔷</div><div class="tc-name">Unity</div></div>
+      <div class="tech-chip"><div class="tc-icon">🖼️</div><div class="tc-name">Aseprite</div></div>
+      <div class="tech-chip"><div class="tc-icon">📦</div><div class="tc-name">Itch.io</div></div>
+      <div class="tech-chip"><div class="tc-icon">🤖</div><div class="tc-name">AI/ML</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament container"><span class="ornament-glyph">✦  ✦  ✦</span></div>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="sec-hd reveal">
+      <div class="sec-eyebrow">Portfolio</div>
+      <h2 class="sec-title">Featured <span>Games</span></h2>
+      <p class="sec-sub">Live animated demos — each canvas below is a real-time game simulation</p>
+    </div>
+    <div class="proj-grid">
+
+      <!-- FEATURED: RPG -->
+      <div class="proj-card featured reveal">
+        <div class="proj-thumb">
+          <canvas class="proj-canvas" id="c-rpg"></canvas>
+          <div class="proj-thumb-overlay"></div>
+          <span class="proj-badge badge-shipped">Shipped</span>
+          <div style="position:absolute;bottom:1.2rem;left:1.2rem;z-index:2;"><div class="feat-ribbon">★ Featured — Live Demo</div></div>
+        </div>
+        <div class="proj-info">
+          <div class="feat-ribbon">★ Most Played</div>
+          <div class="proj-genre">Action RPG · Godot 4 / GDScript</div>
+          <h3 class="proj-title">Chronicles of the Forgotten Realm</h3>
+          <p class="proj-desc">A 2D action RPG with a branching dialogue system (400+ lines), procedurally generated dungeons, and custom behaviour-tree AI for 30+ enemy types. Built a fully custom save/load system, dynamic weather, and hand-authored shaders for the day-night cycle.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Godot 4</span><span class="proj-tag">GDScript</span>
+            <span class="proj-tag">Behavior Trees</span><span class="proj-tag">Proc. Dungeons</span>
+            <span class="proj-tag">Custom Shaders</span><span class="proj-tag">Save System</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="proj-link" onclick="openGameModal('rpg');return false;">▶ Play Game</a>
+            <a href="https://github.com/lewispinkston" target="_blank" class="proj-link">⌥ View Source</a>
+            <a href="#contact" class="proj-link">◈ Contact Me</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPACE SHOOTER -->
+      <div class="proj-card reveal">
+        <div class="proj-thumb">
+          <canvas class="proj-canvas" id="c-shooter"></canvas>
+          <div class="proj-thumb-overlay"></div>
+          <span class="proj-badge badge-shipped">Shipped</span>
+        </div>
+        <div class="proj-info">
+          <div class="proj-genre">Roguelite Shooter · Python / Pygame</div>
+          <h3 class="proj-title">Aether Drift</h3>
+          <p class="proj-desc">Top-down roguelite space shooter built in Python with Pygame. 60+ weapon modifiers, procedural stage generation, and tight responsive controls. Ported to Godot 4 for wider distribution.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Python</span><span class="proj-tag">Pygame</span>
+            <span class="proj-tag">Roguelite</span><span class="proj-tag">Particle VFX</span>
+          </div>
+          <div class="proj-links"><a href="#" class="proj-link" onclick="openGameModal('shooter');return false;">▶ Play Game</a><a href="https://github.com/lewispinkston" target="_blank" class="proj-link">⌥ GitHub</a></div>
+        </div>
+      </div>
+
+      <!-- STEALTH -->
+      <div class="proj-card reveal d1">
+        <div class="proj-thumb">
+          <canvas class="proj-canvas" id="c-stealth"></canvas>
+          <div class="proj-thumb-overlay"></div>
+          <span class="proj-badge badge-beta">Beta</span>
+        </div>
+        <div class="proj-info">
+          <div class="proj-genre">Stealth Platformer · Godot 4</div>
+          <h3 class="proj-title">Shadow's Keep</h3>
+          <p class="proj-desc">2D stealth platformer with dynamic lighting, real-time shadow casting, and a morality system that alters the ending. Custom light raycasting engine written in pure GDScript — inspired by networking packet-routing logic.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Godot 4</span><span class="proj-tag">Light Raycast</span>
+            <span class="proj-tag">Stealth AI</span><span class="proj-tag">Morality System</span>
+          </div>
+          <div class="proj-links"><a href="#" class="proj-link" onclick="openGameModal('stealth');return false;">▶ Play Game</a><a href="https://lewispinkston.itch.io" target="_blank" class="proj-link">⌥ Itch.io</a></div>
+        </div>
+      </div>
+
+      <!-- BUILDER -->
+      <div class="proj-card reveal d2">
+        <div class="proj-thumb">
+          <canvas class="proj-canvas" id="c-builder"></canvas>
+          <div class="proj-thumb-overlay"></div>
+          <span class="proj-badge badge-shipped">Shipped</span>
+        </div>
+        <div class="proj-info">
+          <div class="proj-genre">Survival Builder · Java / LibGDX</div>
+          <h3 class="proj-title">Verdant Frontier</h3>
+          <p class="proj-desc">Top-down colony survival builder written in Java using LibGDX. Dynamic NPC faction systems, seasonal gameplay, and a full crafting tree. Procedurally generated biomes with handcrafted events.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Java</span><span class="proj-tag">LibGDX</span>
+            <span class="proj-tag">Faction AI</span><span class="proj-tag">Proc. Biomes</span>
+          </div>
+          <div class="proj-links"><a href="#" class="proj-link" onclick="openGameModal('builder');return false;">▶ Play Game</a><a href="https://github.com/lewispinkston" target="_blank" class="proj-link">⌥ Source</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CURRENTLY BUILDING ══════════ -->
+<section id="wip">
+  <div class="container">
+    <div class="wip-card reveal">
+      <div>
+        <div class="wip-pulse"><div class="wip-dot"></div> Currently Building</div>
+        <h3 class="wip-title">Project Oracula</h3>
+        <p class="wip-desc">A narrative mystery game with a procedurally generated case system — every playthrough surfaces different clues, suspects, and outcomes. Built on a custom dialogue engine in Godot 4.3. The AI logic draws on my LLM evaluation work from IT.</p>
+        <div><div class="wip-bar-label">Development Progress</div><div class="wip-track"><div class="wip-fill" id="wipFill" data-w="38" style="width:0%"></div></div></div>
+      </div>
+      <div style="text-align:center"><div class="wip-pct" id="wipPct">0%</div><div class="wip-pct-lbl">Complete</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament container"><span class="ornament-glyph">✦  ✦  ✦</span></div>
+
+<!-- ══════════ EXPERIENCE ══════════ -->
+<section id="experience">
+  <div class="container">
+    <div class="sec-hd reveal">
+      <div class="sec-eyebrow">Background</div>
+      <h2 class="sec-title">Technical <span>Foundation</span></h2>
+      <p class="sec-sub">Professional IT experience that feeds directly into game systems thinking</p>
+    </div>
+    <div class="exp-grid">
+      <div class="exp-card reveal">
+        <div class="exp-period">Jan 2025 – Present</div>
+        <div class="exp-role">IT Technician</div>
+        <div class="exp-company">Robert Half · Remote</div>
+        <ul class="exp-bullets">
+          <li>Supported 300+ end users — systematic troubleshooting that mirrors game debugging methodology</li>
+          <li>Analyzed system logs and outputs — same analytical thinking applied to game performance profiling</li>
+          <li>Created clear technical documentation — directly transferable to GDD writing and API docs</li>
+          <li>Evaluated AI/LLM outputs for accuracy — informs how I design NPC dialogue trees</li>
+        </ul>
+      </div>
+      <div class="exp-card reveal d1">
+        <div class="exp-period">Nov 2023 – Dec 2024</div>
+        <div class="exp-role">IT Technician Assistant</div>
+        <div class="exp-company">JJ&amp;L Industries LLC</div>
+        <ul class="exp-bullets">
+          <li>Diagnosed network, hardware, and software faults — builds the low-level systems intuition essential for C++ game optimization</li>
+          <li>Performed rigorous data validation — ensures game logic integrity and save-file QA processes</li>
+          <li>Configured and maintained hardware/software per specs — same discipline applied to build pipelines</li>
+        </ul>
+      </div>
+      <div class="exp-card reveal d2">
+        <div class="exp-period">Current</div>
+        <div class="exp-role">Computer Science</div>
+        <div class="exp-company">University of Phoenix</div>
+        <ul class="exp-bullets">
+          <li>Core curriculum: Data Structures, Algorithms, OOP, Networking Fundamentals</li>
+          <li>Programming focus: Python, Java, C++ applied to game systems projects</li>
+          <li>AI/ML concepts applied to NPC behavior and procedural generation research</li>
+        </ul>
+        <div class="cert-row">
+          <div class="cert">CompTIA A+</div>
+          <div class="cert">CCNA</div>
+          <div class="cert">Python</div>
+          <div class="cert">Java</div>
+          <div class="cert">C++</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament container"><span class="ornament-glyph">✦  ✦  ✦</span></div>
+
+<!-- ══════════ ACHIEVEMENTS ══════════ -->
+<section id="achievements">
+  <div class="container">
+    <div class="sec-hd reveal">
+      <div class="sec-eyebrow">Journey</div>
+      <h2 class="sec-title">Milestones &amp; <span>Victories</span></h2>
+    </div>
+    <div class="ach-grid">
+      <div class="ach-card reveal"><div class="ach-icon">🏆</div><div class="ach-title">Game Jam — Top 15%</div><div class="ach-desc">Placed in the top 15% of the GMTK Game Jam 2024 with a solo Python entry built in 48 hours.</div><span class="ach-year">2024</span></div>
+      <div class="ach-card reveal d1"><div class="ach-icon">📜</div><div class="ach-title">CompTIA A+ Certified</div><div class="ach-desc">Industry-standard IT certification validating hardware, software, networking, and troubleshooting expertise.</div><span class="ach-year">2023</span></div>
+      <div class="ach-card reveal d2"><div class="ach-icon">🌐</div><div class="ach-title">CCNA Certified</div><div class="ach-desc">Cisco Certified Network Associate — validates deep networking knowledge directly applied to multiplayer game architecture.</div><span class="ach-year">2024</span></div>
+      <div class="ach-card reveal"><div class="ach-icon">🎮</div><div class="ach-title">8 Games Shipped</div><div class="ach-desc">From Python prototypes and Java LibGDX projects to polished Godot 4 releases — each build sharpened a new skill.</div><span class="ach-year">2021 – 2025</span></div>
+      <div class="ach-card reveal d1"><div class="ach-icon">🤖</div><div class="ach-title">AI/LLM Evaluator</div><div class="ach-desc">Professional experience evaluating AI model outputs for accuracy — now applied to designing believable NPC dialogue and decision trees.</div><span class="ach-year">2025</span></div>
+      <div class="ach-card reveal d2"><div class="ach-icon">🔥</div><div class="ach-title">300+ Users Supported</div><div class="ach-desc">Built the systematic, patient mindset of a great QA tester by resolving real technical problems at scale in professional IT roles.</div><span class="ach-year">2023 – 2025</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament container"><span class="ornament-glyph">✦  ✦  ✦</span></div>
+
+<!-- ══════════ CONTACT ══════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="sec-hd reveal">
+      <div class="sec-eyebrow">Contact</div>
+      <h2 class="sec-title">Let's Build <span>Together</span></h2>
+      <p class="sec-sub">Open to game dev roles, contract projects, and jam collabs — remote worldwide</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-lead reveal">
+        <h3>Ready to create something <span>extraordinary?</span></h3>
+        <p>Whether you're a studio looking for a technical generalist, an indie team needing reliable systems work, or just someone who wants to talk games and code — my inbox is always open.</p>
+        <div class="contact-items">
+          <div class="c-item"><div class="c-icon">📧</div><div><div class="c-label">Email</div><div class="c-val">ohiotre1@gmail.com</div></div></div>
+          <div class="c-item"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Columbus, Ohio — Open to Remote</div></div></div>
+          <div class="c-item"><div class="c-icon">📞</div><div><div class="c-label">Phone</div><div class="c-val">+1 614-200-1130</div></div></div>
+          <div class="c-item"><div class="c-icon">✅</div><div><div class="c-label">Status</div><div class="c-val avail">Available for new opportunities</div></div></div>
+        </div>
+      </div>
+      <form class="cf reveal d1" id="contactForm">
+        <div class="cf-group"><label class="cf-label">Your Name</label><input type="text" class="cf-input" placeholder="Jane Doe" required></div>
+        <div class="cf-group"><label class="cf-label">Email Address</label><input type="email" class="cf-input" placeholder="jane@studio.com" required></div>
+        <div class="cf-group"><label class="cf-label">Subject</label><input type="text" class="cf-input" placeholder="Job Opportunity / Collaboration"></div>
+        <div class="cf-group"><label class="cf-label">Message</label><textarea class="cf-textarea" placeholder="Tell me about your project or opportunity…" required></textarea></div>
+        <button type="submit" class="cf-submit" id="cfBtn">Send Message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-logo">LP</div>
+    <ul class="foot-nav">
+      <li><a href="#about">About</a></li><li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li><li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="foot-socials">
+      <a href="https://github.com/lewispinkston" target="_blank" class="foot-soc" title="GitHub">GH</a>
+      <a href="https://lewispinkston.itch.io" target="_blank" class="foot-soc" title="Itch.io">IT</a>
+      <a href="https://linkedin.com/in/lewis-pinkston" target="_blank" class="foot-soc" title="LinkedIn">in</a>
+      <a href="https://x.com/lewispinkston" target="_blank" class="foot-soc" title="Twitter / X">𝕏</a>
+    </div>
+    <p class="foot-copy">Crafted by <span>Lewis Pinkston</span> · Columbus, Ohio · 2025</p>
+  </div>
+</footer>
+
+<!-- ══════════ GAME MODAL ══════════ -->
+<div id="gameModal" class="game-modal">
+  <div class="game-modal-inner">
+    <div class="game-modal-header">
+      <span class="game-modal-title" id="gameTitle"></span>
+      <span class="game-modal-hint" id="gameControlsHint"></span>
+      <button class="game-modal-close" onclick="closeGameModal()">✕ Exit Game</button>
+    </div>
+    <canvas id="gameCanvas" tabindex="0"></canvas>
+    <div class="game-modal-footer" id="gameFooter">Click the canvas and use keyboard controls to play</div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   LOADER
+═══════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('gone');
+    animateCounters();
+    initAllCanvases();
+  }, 1800);
+});
+
+/* ═══════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════ */
+const cdot = document.getElementById('cdot');
+const cring = document.getElementById('cring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cdot.style.left=mx+'px'; cdot.style.top=my+'px'; });
+(function raf(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; cring.style.left=rx+'px'; cring.style.top=ry+'px'; requestAnimationFrame(raf); })();
+document.querySelectorAll('a,button,.tech-chip,.proj-card,.ach-card,.exp-card,.tag').forEach(el => {
+  el.addEventListener('mouseenter', () => cring.classList.add('hov'));
+  el.addEventListener('mouseleave', () => cring.classList.remove('hov'));
+});
+
+/* ═══════════════════════════════════════
+   BACKGROUND PARTICLES
+═══════════════════════════════════════ */
+const bgc = document.getElementById('bgc');
+const bx  = bgc.getContext('2d');
+function resizeBg(){ bgc.width=window.innerWidth; bgc.height=window.innerHeight; }
+resizeBg(); window.addEventListener('resize', resizeBg);
+const bgParticles = Array.from({length:90}, () => {
+  const gold = Math.random()>.6;
+  return { x:Math.random()*bgc.width, y:Math.random()*bgc.height,
+    r:Math.random()*1.6+.4, vy:-(Math.random()*.5+.08), vx:(Math.random()-.5)*.25,
+    a:Math.random()*.55+.08, gold };
+});
+(function bgLoop(){
+  bx.clearRect(0,0,bgc.width,bgc.height);
+  bgParticles.forEach(p => {
+    p.y+=p.vy; p.x+=p.vx; p.a-=.0007;
+    if(p.y<-8||p.a<=0){ p.x=Math.random()*bgc.width; p.y=bgc.height+8; p.a=Math.random()*.55+.08; }
+    bx.save(); bx.globalAlpha=Math.max(0,p.a);
+    bx.fillStyle=p.gold?'#d4a843':'#7c3aed';
+    bx.shadowBlur=7; bx.shadowColor=bx.fillStyle;
+    bx.beginPath(); bx.arc(p.x,p.y,p.r,0,Math.PI*2); bx.fill();
+    bx.restore();
+  });
+  requestAnimationFrame(bgLoop);
+})();
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('stuck', window.scrollY>50);
+  let cur='';
+  document.querySelectorAll('section[id]').forEach(s => { if(window.scrollY>=s.offsetTop-220) cur=s.id; });
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+});
+document.getElementById('burger').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const t = document.querySelector(a.getAttribute('href'));
+  if(!t) return; e.preventDefault();
+  document.getElementById('navLinks').classList.remove('open');
+  t.scrollIntoView({behavior:'smooth'});
+}));
+
+/* ═══════════════════════════════════════
+   TYPEWRITER
+═══════════════════════════════════════ */
+const typedEl = document.getElementById('typed');
+const phrases = ['Python & Godot 4.','Java & LibGDX.','C++ precision.','deep systems thinking.','code that feels alive.','worlds worth exploring.'];
+let pi=0, ci=0, del=false;
+function type(){
+  const p=phrases[pi];
+  typedEl.textContent = del ? p.slice(0,--ci) : p.slice(0,++ci);
+  if(!del && ci===p.length){ del=true; setTimeout(type,2200); return; }
+  if(del && ci===0){ del=false; pi=(pi+1)%phrases.length; }
+  setTimeout(type, del?48:82);
+}
+setTimeout(type, 2000);
+
+/* ═══════════════════════════════════════
+   SCROLL REVEAL + SKILL BARS
+═══════════════════════════════════════ */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    e.target.classList.add('visible');
+    e.target.querySelectorAll('.skill-fill').forEach(b => b.style.width=b.dataset.w+'%');
+    if(e.target.querySelector && e.target.querySelector('#wipFill')) triggerWip();
+  });
+}, {threshold:.12});
+document.querySelectorAll('.reveal,.skill-cat').forEach(el => revObs.observe(el));
+
+function triggerWip(){
+  const fill=document.getElementById('wipFill');
+  const pct=document.getElementById('wipPct');
+  if(!fill||fill._done) return; fill._done=true;
+  const target=parseInt(fill.dataset.w);
+  fill.style.width=target+'%';
+  let cur=0;
+  const t=setInterval(()=>{ cur=Math.min(cur+1,target); pct.textContent=cur+'%'; if(cur>=target) clearInterval(t); },28);
+}
+
+/* ═══════════════════════════════════════
+   COUNTERS
+═══════════════════════════════════════ */
+function animateCounters(){
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const end=parseInt(el.dataset.count); let cur=0;
+    const t=setInterval(()=>{ cur=Math.min(cur+Math.max(1,end/35),end); el.textContent=Math.floor(cur)+'+'; if(cur>=end) clearInterval(t); },45);
+  });
+}
+
+/* ═══════════════════════════════════════
+   CONTACT FORM
+═══════════════════════════════════════ */
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn=document.getElementById('cfBtn');
+  btn.textContent='✓ Message Sent!';
+  btn.style.background='linear-gradient(135deg,#059669,#047857)';
+  btn.disabled=true;
+  setTimeout(()=>{ btn.textContent='Send Message →'; btn.style.background=''; btn.disabled=false; e.target.reset(); },3500);
+});
+
+/* ═══════════════════════════════════════
+   GAME CANVAS ANIMATIONS
+═══════════════════════════════════════ */
+function initAllCanvases(){
+  const rpg     = document.getElementById('c-rpg');
+  const shooter = document.getElementById('c-shooter');
+  const stealth = document.getElementById('c-stealth');
+  const builder = document.getElementById('c-builder');
+  if(rpg)     { rpg.width=rpg.offsetWidth||600;     rpg.height=rpg.offsetHeight||280;     initRPG(rpg); }
+  if(shooter) { shooter.width=shooter.offsetWidth||340; shooter.height=shooter.offsetHeight||215; initShooter(shooter); }
+  if(stealth) { stealth.width=stealth.offsetWidth||340; stealth.height=stealth.offsetHeight||215; initStealth(stealth); }
+  if(builder) { builder.width=builder.offsetWidth||340; builder.height=builder.offsetHeight||215; initBuilder(builder); }
+}
+
+/* ─── RPG DUNGEON ─── */
+function initRPG(canvas){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, TILE=22;
+  const player={x:W/2,y:H/2,tx:W*.7,ty:H*.6};
+  const enemies=[
+    {x:80,y:55,dx:.6,dy:0,phase:0},{x:W-90,y:H-55,dx:-.4,dy:.3,phase:Math.PI},
+    {x:120,y:H-70,dx:.35,dy:-.25,phase:1},{x:W*.5,y:H*.3,dx:-.5,dy:.4,phase:2}
+  ];
+  const particles=[]; let t=0, mt=0;
+  function burst(x,y){ for(let i=0;i<6;i++) particles.push({x,y,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:1,decay:.045}); }
+  function draw(){
+    t+=.016; mt+=.016;
+    if(mt>1.8){ mt=0; player.tx=35+Math.random()*(W-70); player.ty=35+Math.random()*(H-70); burst(player.x,player.y); }
+    player.x+=(player.tx-player.x)*.025; player.y+=(player.ty-player.y)*.025;
+    enemies.forEach(e=>{ e.x+=e.dx; e.y+=e.dy; if(e.x<20||e.x>W-20)e.dx*=-1; if(e.y<20||e.y>H-20)e.dy*=-1; });
+    for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=p.decay; if(p.life<=0)particles.splice(i,1); }
+    ctx.fillStyle='#06001a'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(100,0,180,.12)'; ctx.lineWidth=.5;
+    for(let x=0;x<=W;x+=TILE){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=TILE){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Walls
+    ctx.fillStyle='rgba(40,0,70,.7)';
+    [[0,0,2,Math.ceil(H/TILE)],[Math.floor(W/TILE)-2,0,2,Math.ceil(H/TILE)],
+     [0,0,Math.ceil(W/TILE),2],[0,Math.floor(H/TILE)-2,Math.ceil(W/TILE),2]].forEach(([c,r,cw,rh])=>ctx.fillRect(c*TILE,r*TILE,cw*TILE,rh*TILE));
+    // Particles
+    particles.forEach(p=>{ ctx.save(); ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle='#d4a843'; ctx.shadowBlur=6; ctx.shadowColor='#d4a843'; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); ctx.restore(); });
+    // Enemies
+    enemies.forEach(e=>{ const pulse=.6+.4*Math.sin(t*3+e.phase); ctx.save(); ctx.shadowBlur=14*pulse; ctx.shadowColor='#dc2626'; ctx.fillStyle=`rgba(220,38,38,${.7+.3*pulse})`; ctx.fillRect(e.x-5,e.y-5,10,10); ctx.restore(); ctx.fillStyle='rgba(220,38,38,.3)'; ctx.fillRect(e.x-8,e.y-12,16,3); ctx.fillStyle='#dc2626'; ctx.fillRect(e.x-8,e.y-12,10,3); });
+    // Player diamond
+    const pp=.7+.3*Math.sin(t*2); ctx.save(); ctx.shadowBlur=22*pp; ctx.shadowColor='#d4a843'; ctx.fillStyle='#f0c840'; ctx.translate(player.x,player.y); ctx.rotate(Math.PI/4); ctx.fillRect(-5,-5,10,10); ctx.restore();
+    ctx.save(); ctx.strokeStyle=`rgba(212,168,67,${.2+.2*pp})`; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(player.x,player.y,14+3*pp,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    // HUD bars
+    ctx.fillStyle='rgba(5,0,16,.7)'; ctx.fillRect(8,8,72,10); ctx.fillStyle='#dc2626'; ctx.fillRect(10,10,50+10*Math.sin(t*.3),6); ctx.fillStyle='rgba(5,0,16,.7)'; ctx.fillRect(8,22,72,10); ctx.fillStyle='#7c3aed'; ctx.fillRect(10,24,45,6);
+    ctx.fillStyle='rgba(212,168,67,.8)'; ctx.font='8px monospace'; ctx.fillText('HP',12,18); ctx.fillText('MP',12,32);
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ─── SPACE SHOOTER ─── */
+function initShooter(canvas){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+  const stars=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,s:Math.random()*1.4+.3,speed:Math.random()*1.5+.4,a:Math.random()}));
+  const player={x:W/2,y:H-38}; const bullets=[],enemies=[],explosions=[];
+  let bt=0, et=0, md=1, mt2=0;
+  function explode(x,y){ for(let i=0;i<12;i++){ const a=(Math.PI*2/12)*i; explosions.push({x,y,vx:Math.cos(a)*(1+Math.random()*2),vy:Math.sin(a)*(1+Math.random()*2),life:1,col:Math.random()>.5?'#06b6d4':'#d4a843'}); } }
+  function draw(){
+    bt+=.016; et+=.016; mt2+=.016;
+    if(mt2>1.2){mt2=0;md*=-1;} player.x=Math.max(18,Math.min(W-18,player.x+md*1.5));
+    if(bt>.2){bt=0;bullets.push({x:player.x,y:player.y-14,s:7});}
+    if(et>1.3){et=0;enemies.push({x:20+Math.random()*(W-40),y:-10,s:.9+Math.random()*.5,hp:2,sz:7+Math.random()*4});}
+    for(let i=bullets.length-1;i>=0;i--){bullets[i].y-=bullets[i].s;if(bullets[i].y<0)bullets.splice(i,1);}
+    for(let i=enemies.length-1;i>=0;i--){
+      enemies[i].y+=enemies[i].s; if(enemies[i].y>H+20){enemies.splice(i,1);continue;}
+      for(let j=bullets.length-1;j>=0;j--){
+        const dx=bullets[j].x-enemies[i].x,dy=bullets[j].y-enemies[i].y;
+        if(Math.sqrt(dx*dx+dy*dy)<enemies[i].sz+3){bullets.splice(j,1);enemies[i].hp--;if(enemies[i].hp<=0){explode(enemies[i].x,enemies[i].y);enemies.splice(i,1);}break;}
+      }
+    }
+    for(let i=explosions.length-1;i>=0;i--){const e=explosions[i];e.x+=e.vx;e.y+=e.vy;e.life-=.04;if(e.life<=0)explosions.splice(i,1);}
+    ctx.fillStyle='#000d1a'; ctx.fillRect(0,0,W,H);
+    stars.forEach(s=>{ s.y+=s.speed*.4; if(s.y>H)s.y=0; ctx.globalAlpha=s.a; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(s.x,s.y,s.s,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1;
+    bullets.forEach(b=>{ ctx.save(); ctx.shadowBlur=8; ctx.shadowColor='#06b6d4'; ctx.fillStyle='#06b6d4'; ctx.fillRect(b.x-1.5,b.y-7,3,14); ctx.restore(); });
+    enemies.forEach(e=>{ ctx.save(); ctx.shadowBlur=10; ctx.shadowColor='#dc2626'; ctx.fillStyle='#dc2626'; ctx.beginPath(); ctx.moveTo(e.x,e.y+e.sz); ctx.lineTo(e.x-e.sz,e.y-e.sz*.5); ctx.lineTo(e.x+e.sz,e.y-e.sz*.5); ctx.closePath(); ctx.fill(); ctx.restore(); });
+    explosions.forEach(ex=>{ ctx.save(); ctx.globalAlpha=ex.life; ctx.shadowBlur=8; ctx.shadowColor=ex.col; ctx.fillStyle=ex.col; ctx.beginPath(); ctx.arc(ex.x,ex.y,2.5,0,Math.PI*2); ctx.fill(); ctx.restore(); });
+    ctx.save(); ctx.shadowBlur=18; ctx.shadowColor='#06b6d4'; ctx.fillStyle='#06b6d4';
+    ctx.beginPath(); ctx.moveTo(player.x,player.y-16); ctx.lineTo(player.x-11,player.y+9); ctx.lineTo(player.x,player.y+4); ctx.lineTo(player.x+11,player.y+9); ctx.closePath(); ctx.fill();
+    ctx.shadowColor='#a78bfa'; ctx.fillStyle='#a78bfa'; ctx.beginPath(); ctx.arc(player.x,player.y+8,4,0,Math.PI*2); ctx.fill(); ctx.restore();
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ─── STEALTH PLATFORMER ─── */
+function initStealth(canvas){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+  const platforms=[{x:0,y:H-18,w:W,h:18},{x:50,y:H-78,w:110,h:10},{x:W-160,y:H-118,w:110,h:10},{x:90,y:H-158,w:80,h:10},{x:W/2-50,y:H-198,w:100,h:10}];
+  const lights=[{x:45,y:0,a:Math.PI*.55,sw:.55,sp:.006,t:0},{x:W-45,y:0,a:Math.PI*.45,sw:.55,sp:-.007,t:Math.PI},{x:W*.5,y:0,a:Math.PI*.5,sw:.38,sp:.009,t:Math.PI*.5}];
+  const player={x:80,y:H-90,tx:80,ty:H-30}; let t=0, pti=0, pmt=0;
+  function draw(){
+    t+=.016; pmt+=.016;
+    lights.forEach(l=>{ l.t+=l.sp; l.a=Math.PI*.5+Math.sin(l.t)*l.sw; });
+    if(pmt>2.2){pmt=0;pti=Math.floor(Math.random()*platforms.length);}
+    const tp=platforms[pti]; player.tx=tp.x+tp.w*.25+Math.random()*tp.w*.5; player.ty=tp.y-14;
+    player.x+=(player.tx-player.x)*.022; player.y+=(player.ty-player.y)*.028;
+    let inLight=false;
+    lights.forEach(l=>{const dx=player.x-l.x,dy=player.y-l.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<155){const ang=Math.atan2(dy,dx),diff=Math.abs(((ang-l.a)+Math.PI*3)%(Math.PI*2)-Math.PI);if(diff<.38)inLight=true;}});
+    ctx.fillStyle='#060010'; ctx.fillRect(0,0,W,H);
+    platforms.forEach(p=>{ ctx.fillStyle='rgba(40,0,70,.85)'; ctx.fillRect(p.x,p.y,p.w,p.h); ctx.fillStyle='rgba(167,139,250,.3)'; ctx.fillRect(p.x,p.y,p.w,2); });
+    lights.forEach(l=>{
+      const g=ctx.createRadialGradient(l.x,l.y,0,l.x,l.y,165);
+      g.addColorStop(0,'rgba(255,240,120,.22)'); g.addColorStop(1,'rgba(255,240,120,0)');
+      ctx.save(); ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.arc(l.x,l.y,165,l.a-.38,l.a+.38); ctx.closePath(); ctx.fillStyle=g; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.shadowBlur=12; ctx.shadowColor='#fef08a'; ctx.fillStyle='#fef08a'; ctx.beginPath(); ctx.arc(l.x,l.y,4,0,Math.PI*2); ctx.fill(); ctx.restore();
+    });
+    const pc=inLight?'#dc2626':'#a78bfa', pg=inLight?'#dc2626':'#7c3aed';
+    ctx.save(); ctx.shadowBlur=12; ctx.shadowColor=pg; ctx.fillStyle=pc; ctx.fillRect(player.x-4,player.y-11,8,13); ctx.restore();
+    ctx.save(); ctx.shadowBlur=8; ctx.shadowColor=pg; ctx.fillStyle=inLight?'#ef4444':'#c4b5fd'; ctx.beginPath(); ctx.arc(player.x,player.y-15,5,0,Math.PI*2); ctx.fill(); ctx.restore();
+    if(inLight){ctx.fillStyle='rgba(220,38,38,.95)';ctx.font='bold 11px monospace';ctx.fillText('!',player.x-3,player.y-25);}
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ─── COLONY BUILDER ─── */
+function initBuilder(canvas){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, G=18;
+  const resources=[];
+  for(let i=0;i<10;i++) resources.push({x:18+Math.floor(Math.random()*(W-36)/G)*G,y:18+Math.floor(Math.random()*(H-50)/G)*G,type:Math.random()>.5?'tree':'ore',amt:3+Math.floor(Math.random()*3)});
+  const building={x:W*.72,y:H*.38,prog:0,max:24};
+  const workers=[{x:W*.3,y:H*.5,tx:W*.3,ty:H*.5,carry:null,state:'idle',timer:0,tgt:null},{x:W*.5,y:H*.6,tx:W*.5,ty:H*.6,carry:null,state:'idle',timer:0,tgt:null}];
+  const rparts=[]; let t=0;
+  function draw(){
+    t+=.016;
+    workers.forEach(w=>{
+      w.timer-=.016;
+      w.x+=(w.tx-w.x)*.038; w.y+=(w.ty-w.y)*.038;
+      const dx=w.tx-w.x,dy=w.ty-w.y,at=Math.sqrt(dx*dx+dy*dy)<3;
+      if(at&&w.timer<=0){
+        if(w.state==='idle'){const r=resources.filter(r=>r.amt>0);if(r.length>0){const tg=r[Math.floor(Math.random()*r.length)];w.tx=tg.x;w.ty=tg.y;w.tgt=tg;w.state='res';}
+        }else if(w.state==='res'){if(w.tgt&&w.tgt.amt>0){w.tgt.amt--;w.carry=w.tgt.type;for(let i=0;i<7;i++)rparts.push({x:w.x,y:w.y,vx:(Math.random()-.5)*2,vy:-Math.random()*2-.5,life:1,type:w.carry});w.tx=building.x;w.ty=building.y;w.state='base';w.timer=.4;}else{w.state='idle';}
+        }else if(w.state==='base'){building.prog=Math.min(building.max,building.prog+1);w.carry=null;w.state='idle';w.timer=.5;}
+      }
+    });
+    for(let i=rparts.length-1;i>=0;i--){const p=rparts[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.life-=.03;if(p.life<=0)rparts.splice(i,1);}
+    ctx.fillStyle='#010d00'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(16,185,129,.08)'; ctx.lineWidth=.5;
+    for(let x=0;x<=W;x+=G){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=G){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    resources.forEach(r=>{
+      if(r.amt<=0)return;
+      const pulse=.7+.3*Math.sin(t*2+r.x);
+      ctx.save();
+      if(r.type==='tree'){ctx.shadowBlur=8*pulse;ctx.shadowColor='#10b981';ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(r.x+8,r.y+4,5+pulse,0,Math.PI*2);ctx.fill();ctx.fillStyle='#6b3a2a';ctx.fillRect(r.x+5,r.y+8,6,7);}
+      else{ctx.shadowBlur=8*pulse;ctx.shadowColor='#60a5fa';ctx.fillStyle='#60a5fa';ctx.fillRect(r.x+2,r.y+2,12,12);}
+      ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='8px monospace';ctx.fillText(r.amt,r.x+6,r.y-2);
+      ctx.restore();
+    });
+    const bf=building.prog/building.max;
+    ctx.save();
+    ctx.fillStyle='rgba(212,168,67,.12)';ctx.fillRect(building.x-26,building.y-26,52,52);
+    ctx.fillStyle='rgba(212,168,67,.38)';ctx.fillRect(building.x-26,building.y-26+52*(1-bf),52,52*bf);
+    ctx.strokeStyle='#d4a843';ctx.lineWidth=1.5;ctx.strokeRect(building.x-26,building.y-26,52,52);
+    ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(building.x-26,building.y+29,52,6);
+    ctx.fillStyle='#d4a843';ctx.fillRect(building.x-26,building.y+29,52*bf,6);
+    ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='8px monospace';ctx.fillText(Math.floor(bf*100)+'%',building.x-12,building.y+35);
+    ctx.restore();
+    rparts.forEach(p=>{ctx.save();ctx.globalAlpha=p.life;ctx.fillStyle=p.type==='tree'?'#10b981':'#60a5fa';ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill();ctx.restore();});
+    workers.forEach((w,wi)=>{
+      const bob=Math.sin(t*4+wi*Math.PI)*1.5;
+      ctx.save();ctx.shadowBlur=10;ctx.shadowColor='#d4a843';ctx.fillStyle='#f0c840';ctx.fillRect(w.x-4,w.y-8+bob,8,10);
+      ctx.fillStyle='#fde68a';ctx.beginPath();ctx.arc(w.x,w.y-12+bob,5,0,Math.PI*2);ctx.fill();
+      if(w.carry){ctx.fillStyle=w.carry==='tree'?'#10b981':'#60a5fa';ctx.beginPath();ctx.arc(w.x,w.y-18+bob,3,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ═══════════════════════════════════════
+   GAME MODAL CONTROLLER
+═══════════════════════════════════════ */
+let _gameCleanup = null;
+
+function openGameModal(id) {
+  const modal = document.getElementById('gameModal');
+  const canvas = document.getElementById('gameCanvas');
+  const maxW = Math.min(window.innerWidth - 40, 920);
+  const maxH = Math.min(window.innerHeight - 130, 520);
+  canvas.width = maxW; canvas.height = maxH;
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('open'));
+  document.body.style.overflow = 'hidden';
+  if (_gameCleanup) { _gameCleanup(); _gameCleanup = null; }
+  const info = {
+    rpg:     { title:'Chronicles of Forgotten Realm', hint:'Arrow Keys / WASD — Move  ·  Space — Attack  ·  Collect gold' },
+    shooter: { title:'Aether Drift',                  hint:'← → — Move  ·  Auto-fire is ON  ·  Survive the waves' },
+    stealth: { title:"Shadow's Keep",                 hint:'← → — Walk  ·  Space / ↑ — Jump  ·  Stay out of the light' },
+    builder: { title:'Verdant Frontier',              hint:'Click nodes to harvest  ·  Click slots to build' }
+  };
+  const g = info[id] || { title: id, hint: '' };
+  document.getElementById('gameTitle').textContent = g.title;
+  document.getElementById('gameControlsHint').textContent = g.hint;
+  const games = { rpg: playRPG, shooter: playShooter, stealth: playStealth, builder: playBuilder };
+  if (games[id]) setTimeout(() => { canvas.focus(); _gameCleanup = games[id](canvas); }, 60);
+  modal.onclick = e => { if (e.target === modal) closeGameModal(); };
+}
+
+function closeGameModal() {
+  const modal = document.getElementById('gameModal');
+  modal.classList.remove('open');
+  setTimeout(() => { modal.style.display = 'none'; }, 320);
+  document.body.style.overflow = '';
+  if (_gameCleanup) { _gameCleanup(); _gameCleanup = null; }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGameModal(); });
+
+/* ═══════════════════════════════════════
+   PLAYABLE: AETHER DRIFT (Space Shooter)
+═══════════════════════════════════════ */
+function playShooter(canvas) {
+  const ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+  const stars = Array.from({length:110}, () => ({ x:Math.random()*W, y:Math.random()*H, s:Math.random()*1.5+.3, spd:Math.random()*1.6+.4 }));
+  let score=0, lives=3, wave=1, gameOver=false, animId;
+  let shootT=0, enemyT=0, waveT=0, gt=0;
+  const pl = { x:W/2, y:H-65, w:22, h:30, spd:5 };
+  const bullets=[], enemies=[], exps=[];
+  const keys = {};
+  const kd = e => { keys[e.key]=true; if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault(); };
+  const ku = e => { keys[e.key]=false; };
+  window.addEventListener('keydown',kd); window.addEventListener('keyup',ku);
+
+  function explode(x,y,big) {
+    const n=big?20:10;
+    for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,spd=1+Math.random()*(big?4:2.5);
+      exps.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,life:1,sz:big?3.5:2,col:['#f59e0b','#06b6d4','#ef4444','#a78bfa'][Math.floor(Math.random()*4)]});}
+  }
+  function spawnEnemy() {
+    const t=['straight','zigzag','bomber'][Math.floor(Math.random()*Math.min(3,wave))];
+    enemies.push({x:30+Math.random()*(W-60),y:-20,w:15,h:14,spd:1.2+Math.random()*.8+wave*.2,hp:t==='bomber'?3:1,maxhp:t==='bomber'?3:1,type:t,dt:Math.random()*Math.PI*2,dx:t==='zigzag'?(Math.random()>.5?1:-1)*(1+Math.random()):0});
+  }
+  function restart(){score=0;lives=3;wave=1;gameOver=false;shootT=0;enemyT=0;waveT=0;gt=0;bullets.length=0;enemies.length=0;exps.length=0;pl.x=W/2;}
+  canvas.addEventListener('click',()=>{if(gameOver)restart();});
+
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min((now-last)/1000,.04);last=now;gt+=dt;shootT+=dt;enemyT+=dt;waveT+=dt;
+    if(!gameOver){
+      if(keys['ArrowLeft']||keys['a']) pl.x=Math.max(pl.w,pl.x-pl.spd);
+      if(keys['ArrowRight']||keys['d']) pl.x=Math.min(W-pl.w,pl.x+pl.spd);
+      if(shootT>=.17){shootT=0;bullets.push({x:pl.x,y:pl.y-pl.h*.5,vy:-10});}
+      if(enemyT>=Math.max(.5,1.6-wave*.13)){enemyT=0;spawnEnemy();if(wave>=3&&Math.random()>.5)spawnEnemy();}
+      if(waveT>=20){waveT=0;wave++;}
+      for(let i=bullets.length-1;i>=0;i--){bullets[i].y+=bullets[i].vy;if(bullets[i].y<-10)bullets.splice(i,1);}
+      for(let i=enemies.length-1;i>=0;i--){
+        const e=enemies[i];e.y+=e.spd;e.dt+=.05;
+        if(e.type==='zigzag'){e.x+=e.dx;if(e.x<20||e.x>W-20)e.dx*=-1;}
+        if(e.type==='bomber')e.x+=(pl.x-e.x)*.008;
+        if(e.y>H+20){enemies.splice(i,1);lives--;if(lives<=0){gameOver=true;explode(pl.x,pl.y,true);}continue;}
+        let hit=false;
+        for(let j=bullets.length-1;j>=0;j--){
+          if(Math.abs(bullets[j].x-e.x)<e.w+3&&Math.abs(bullets[j].y-e.y)<e.h+3){
+            bullets.splice(j,1);e.hp--;
+            if(e.hp<=0){explode(e.x,e.y,e.type==='bomber');score+=e.type==='bomber'?30:10;enemies.splice(i,1);}
+            hit=true;break;
+          }
+        }
+        if(hit)continue;
+        if(Math.abs(e.x-pl.x)<pl.w&&Math.abs(e.y-pl.y)<pl.h){explode(pl.x,pl.y,true);enemies.splice(i,1);lives--;if(lives<=0)gameOver=true;}
+      }
+      for(let i=exps.length-1;i>=0;i--){const ex=exps[i];ex.x+=ex.vx;ex.y+=ex.vy;ex.vy+=.06;ex.life-=.035;if(ex.life<=0)exps.splice(i,1);}
+    }
+    // Draw
+    ctx.fillStyle='#000c1a';ctx.fillRect(0,0,W,H);
+    stars.forEach(s=>{s.y+=s.spd*.25;if(s.y>H)s.y=0;ctx.globalAlpha=.5+Math.sin(gt*2+s.x)*.4;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x,s.y,s.s,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
+    if(gameOver){
+      ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(0,0,W,H);
+      ctx.textAlign='center';ctx.shadowBlur=28;ctx.shadowColor='#d4a843';ctx.fillStyle='#d4a843';
+      ctx.font=`bold ${Math.min(44,W*.08)}px 'Cinzel Decorative',serif`;ctx.fillText('GAME OVER',W/2,H/2-52);
+      ctx.shadowBlur=0;ctx.fillStyle='#a78bfa';ctx.font=`${Math.min(20,W*.04)}px 'Cinzel',serif`;
+      ctx.fillText('FINAL SCORE: '+score,W/2,H/2+4);ctx.fillText('WAVE: '+wave,W/2,H/2+36);
+      ctx.fillStyle='#10b981';ctx.font=`${Math.min(15,W*.03)}px 'Cinzel',serif`;ctx.fillText('[ CLICK TO RESTART ]',W/2,H/2+76);
+      ctx.textAlign='left';ctx.shadowBlur=0;animId=requestAnimationFrame(loop);return;
+    }
+    bullets.forEach(b=>{ctx.save();ctx.shadowBlur=12;ctx.shadowColor='#06b6d4';ctx.fillStyle='#06b6d4';ctx.fillRect(b.x-2,b.y-8,4,18);ctx.restore();});
+    enemies.forEach(e=>{const p=.7+.3*Math.sin(gt*5+e.dt);ctx.save();ctx.shadowBlur=14*p;ctx.shadowColor=e.type==='bomber'?'#f59e0b':'#dc2626';ctx.fillStyle=e.type==='bomber'?'#f59e0b':'#ef4444';ctx.translate(e.x,e.y);if(e.type==='bomber'){ctx.beginPath();ctx.arc(0,0,e.w,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(-e.w,-e.w-8,e.w*2,4);ctx.fillStyle='#10b981';ctx.fillRect(-e.w,-e.w-8,e.w*2*(e.hp/e.maxhp),4);}else{ctx.beginPath();ctx.moveTo(0,e.h);ctx.lineTo(-e.w,-e.h*.5);ctx.lineTo(e.w,-e.h*.5);ctx.closePath();ctx.fill();}ctx.restore();});
+    exps.forEach(ex=>{ctx.save();ctx.globalAlpha=Math.max(0,ex.life);ctx.shadowBlur=8;ctx.shadowColor=ex.col;ctx.fillStyle=ex.col;ctx.beginPath();ctx.arc(ex.x,ex.y,ex.sz,0,Math.PI*2);ctx.fill();ctx.restore();});
+    const thr=.6+.4*Math.sin(gt*15);ctx.save();ctx.shadowBlur=22;ctx.shadowColor='#06b6d4';ctx.fillStyle='#06b6d4';ctx.beginPath();ctx.moveTo(pl.x,pl.y-pl.h*.55);ctx.lineTo(pl.x-pl.w*.5,pl.y+pl.h*.5);ctx.lineTo(pl.x-pl.w*.18,pl.y+pl.h*.2);ctx.lineTo(pl.x,pl.y+pl.h*.1);ctx.lineTo(pl.x+pl.w*.18,pl.y+pl.h*.2);ctx.lineTo(pl.x+pl.w*.5,pl.y+pl.h*.5);ctx.closePath();ctx.fill();ctx.shadowColor='#a78bfa';ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.ellipse(pl.x,pl.y+pl.h*.52,6*thr,4,0,0,Math.PI*2);ctx.fill();ctx.restore();
+    ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,W,34);ctx.fillStyle='#d4a843';ctx.font='bold 14px Rajdhani,monospace';ctx.fillText('SCORE: '+score,14,22);ctx.textAlign='center';ctx.fillText('WAVE '+wave,W/2,22);ctx.textAlign='left';ctx.fillStyle='#06b6d4';ctx.font='13px monospace';for(let i=0;i<lives;i++)ctx.fillText('▲',W-20-i*19,22);
+    animId=requestAnimationFrame(loop);
+  }
+  animId=requestAnimationFrame(loop);
+  return ()=>{cancelAnimationFrame(animId);window.removeEventListener('keydown',kd);window.removeEventListener('keyup',ku);};
+}
+
+/* ═══════════════════════════════════════
+   PLAYABLE: CHRONICLES (Dungeon RPG)
+═══════════════════════════════════════ */
+function playRPG(canvas) {
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  const TILE=28,COLS=Math.floor(W/TILE),ROWS=Math.floor(H/TILE);
+  let score=0,hp=5,maxhp=5,gameOver=false,animId,attackCool=0,gt=0,invincible=0,moveT=0;
+  const pl={gx:Math.floor(COLS/2),gy:Math.floor(ROWS/2),px:0,py:0};
+  pl.px=pl.gx*TILE+TILE/2;pl.py=pl.gy*TILE+TILE/2;
+  const enemies=[],golds=[],effects=[];
+  const keys={};
+  const kd=e=>{keys[e.key]=true;if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))e.preventDefault();};
+  const ku=e=>{keys[e.key]=false;};
+  window.addEventListener('keydown',kd);window.addEventListener('keyup',ku);
+  function spawnEnemy(){let gx,gy;do{gx=1+Math.floor(Math.random()*(COLS-2));gy=1+Math.floor(Math.random()*(ROWS-2));}while(Math.abs(gx-pl.gx)<5&&Math.abs(gy-pl.gy)<5);enemies.push({gx,gy,px:gx*TILE+TILE/2,py:gy*TILE+TILE/2,hp:2,maxhp:2,moveT:0,phase:Math.random()*Math.PI*2,alive:true});}
+  function spawnGold(){const gx=2+Math.floor(Math.random()*(COLS-4)),gy=2+Math.floor(Math.random()*(ROWS-4));golds.push({gx,gy,px:gx*TILE+TILE/2,py:gy*TILE+TILE/2,gt:Math.random()*Math.PI*2,collected:false});}
+  function fx(x,y,txt,col){effects.push({x,y,txt,col,life:1,vy:-1});}
+  for(let i=0;i<5;i++)spawnEnemy();for(let i=0;i<6;i++)spawnGold();
+  function restart(){score=0;hp=maxhp;gameOver=false;enemies.length=0;golds.length=0;effects.length=0;attackCool=0;invincible=0;pl.gx=Math.floor(COLS/2);pl.gy=Math.floor(ROWS/2);pl.px=pl.gx*TILE+TILE/2;pl.py=pl.gy*TILE+TILE/2;for(let i=0;i<5;i++)spawnEnemy();for(let i=0;i<6;i++)spawnGold();}
+  canvas.addEventListener('click',()=>{if(gameOver)restart();});
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min((now-last)/1000,.04);last=now;gt+=dt;moveT+=dt;attackCool-=dt;invincible-=dt;
+    if(!gameOver){
+      if(moveT>=.13){let dx=0,dy=0;if(keys['ArrowLeft']||keys['a'])dx=-1;else if(keys['ArrowRight']||keys['d'])dx=1;else if(keys['ArrowUp']||keys['w'])dy=-1;else if(keys['ArrowDown']||keys['s'])dy=1;if(dx||dy){moveT=0;const nx=pl.gx+dx,ny=pl.gy+dy;if(nx>=1&&nx<COLS-1&&ny>=1&&ny<ROWS-1){pl.gx=nx;pl.gy=ny;}}}
+      pl.px+=(pl.gx*TILE+TILE/2-pl.px)*.2;pl.py+=(pl.gy*TILE+TILE/2-pl.py)*.2;
+      if((keys[' ']||keys['z'])&&attackCool<=0){attackCool=.35;enemies.forEach(e=>{if(Math.abs(e.gx-pl.gx)<=1&&Math.abs(e.gy-pl.gy)<=1){e.hp--;fx(e.px,e.py-8,'-1','#f59e0b');if(e.hp<=0){e.alive=false;score+=20;fx(e.px,e.py-18,'SLAIN +20','#d4a843');}}});}
+      golds.forEach(g=>{if(!g.collected&&Math.abs(g.gx-pl.gx)<=1&&Math.abs(g.gy-pl.gy)<=1){g.collected=true;score+=5;fx(g.px,g.py-10,'+5','#fbbf24');}});
+      enemies.filter(e=>e.alive).forEach(e=>{e.moveT+=dt;if(e.moveT>=.65){e.moveT=0;const dx2=Math.sign(pl.gx-e.gx),dy2=Math.sign(pl.gy-e.gy);if(Math.abs(pl.gx-e.gx)>Math.abs(pl.gy-e.gy))e.gx+=dx2;else e.gy+=dy2;e.gx=Math.max(1,Math.min(COLS-2,e.gx));e.gy=Math.max(1,Math.min(ROWS-2,e.gy));if(e.gx===pl.gx&&e.gy===pl.gy&&invincible<=0){hp--;invincible=1;fx(pl.px,pl.py-16,'-1 HP','#ef4444');if(hp<=0){gameOver=true;}}}e.px+=(e.gx*TILE+TILE/2-e.px)*.15;e.py+=(e.gy*TILE+TILE/2-e.py)*.15;});
+      for(let i=enemies.length-1;i>=0;i--)if(!enemies[i].alive)enemies.splice(i,1);
+      for(let i=golds.length-1;i>=0;i--)if(golds[i].collected)golds.splice(i,1);
+      if(enemies.length<3)spawnEnemy();if(golds.length<4)spawnGold();
+    }
+    for(let i=effects.length-1;i>=0;i--){effects[i].y+=effects[i].vy;effects[i].life-=.025;if(effects[i].life<=0)effects.splice(i,1);}
+    // Draw
+    ctx.fillStyle='#06001a';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(100,0,180,.14)';ctx.lineWidth=.6;
+    for(let x=0;x<=W;x+=TILE){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=TILE){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.fillStyle='rgba(35,0,65,.85)';ctx.fillRect(0,0,W,TILE);ctx.fillRect(0,H-TILE,W,TILE);ctx.fillRect(0,0,TILE,H);ctx.fillRect(W-TILE,0,TILE,H);
+    ctx.strokeStyle='rgba(167,139,250,.3)';ctx.lineWidth=2;ctx.strokeRect(TILE,TILE,W-TILE*2,H-TILE*2);
+    golds.forEach(g=>{if(g.collected)return;const p=.6+.4*Math.sin(gt*3+g.gt);ctx.save();ctx.shadowBlur=12*p;ctx.shadowColor='#fbbf24';ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(g.px,g.py,5,0,Math.PI*2);ctx.fill();ctx.restore();});
+    enemies.filter(e=>e.alive).forEach(e=>{const p=.6+.4*Math.sin(gt*4+e.phase);ctx.save();ctx.shadowBlur=14*p;ctx.shadowColor='#dc2626';ctx.fillStyle='#ef4444';ctx.fillRect(e.px-7,e.py-7,14,14);ctx.restore();ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(e.px-8,e.py-14,16,3);ctx.fillStyle='#dc2626';ctx.fillRect(e.px-8,e.py-14,16*(e.hp/e.maxhp),3);});
+    const pp=.7+.3*Math.sin(gt*3),flash=invincible>0&&Math.sin(gt*20)>0;
+    ctx.save();ctx.shadowBlur=22*pp;ctx.shadowColor='#d4a843';ctx.fillStyle=flash?'rgba(212,168,67,.25)':'#f0c840';ctx.translate(pl.px,pl.py);ctx.rotate(Math.PI/4);ctx.fillRect(-5,-5,10,10);ctx.restore();
+    ctx.save();ctx.strokeStyle=`rgba(212,168,67,${.2+.2*pp})`;ctx.lineWidth=1;ctx.beginPath();ctx.arc(pl.px,pl.py,15+3*pp,0,Math.PI*2);ctx.stroke();ctx.restore();
+    if(attackCool>.15){ctx.save();ctx.globalAlpha=.22;ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(pl.px,pl.py,TILE*1.4,0,Math.PI*2);ctx.fill();ctx.restore();}
+    effects.forEach(ef=>{ctx.save();ctx.globalAlpha=Math.min(1,ef.life*2);ctx.fillStyle=ef.col;ctx.font='bold 11px Rajdhani,monospace';ctx.textAlign='center';ctx.shadowBlur=6;ctx.shadowColor=ef.col;ctx.fillText(ef.txt,ef.x,ef.y);ctx.textAlign='left';ctx.restore();});
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,32);ctx.fillStyle='#d4a843';ctx.font='bold 13px Rajdhani,monospace';ctx.fillText('SCORE: '+score,12,21);ctx.textAlign='center';ctx.fillText('DUNGEON CRAWL',W/2,21);ctx.textAlign='left';for(let i=0;i<maxhp;i++){ctx.fillStyle=i<hp?'#ef4444':'rgba(220,38,38,.2)';ctx.beginPath();ctx.arc(W-18-i*20,16,7,0,Math.PI*2);ctx.fill();}
+    if(gameOver){ctx.fillStyle='rgba(0,0,0,.75)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.shadowBlur=28;ctx.shadowColor='#dc2626';ctx.fillStyle='#dc2626';ctx.font=`bold ${Math.min(42,W*.08)}px 'Cinzel Decorative',serif`;ctx.fillText('HERO FALLEN',W/2,H/2-50);ctx.shadowBlur=0;ctx.fillStyle='#a78bfa';ctx.font=`${Math.min(20,W*.04)}px 'Cinzel',serif`;ctx.fillText('SCORE: '+score,W/2,H/2+8);ctx.fillStyle='#10b981';ctx.font=`${Math.min(15,W*.03)}px 'Cinzel',serif`;ctx.fillText('[ CLICK TO RESTART ]',W/2,H/2+52);ctx.textAlign='left';ctx.shadowBlur=0;}
+    if(gt<5&&!gameOver){ctx.save();ctx.globalAlpha=Math.min(1,(5-gt)/1.5);ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(W/2-150,H-40,300,28);ctx.fillStyle='#a78bfa';ctx.font='12px Rajdhani';ctx.textAlign='center';ctx.fillText('WASD/Arrows Move  ·  Space Attack  ·  Walk into gold',W/2,H-21);ctx.textAlign='left';ctx.restore();}
+    animId=requestAnimationFrame(loop);
+  }
+  animId=requestAnimationFrame(loop);
+  return ()=>{cancelAnimationFrame(animId);window.removeEventListener('keydown',kd);window.removeEventListener('keyup',ku);};
+}
+
+/* ═══════════════════════════════════════
+   PLAYABLE: SHADOW'S KEEP (Stealth)
+═══════════════════════════════════════ */
+function playStealth(canvas) {
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  let score=0,lives=3,gameOver=false,animId,gt=0,detected=0,detFlash=0;
+  const pf=[{x:0,y:H-22,w:W},{x:W*.04,y:H-90,w:W*.18},{x:W*.35,y:H-90,w:W*.17},{x:W*.65,y:H-90,w:W*.17},{x:W*.1,y:H-168,w:W*.22},{x:W*.5,y:H-168,w:W*.22},{x:W*.27,y:H-246,w:W*.46}];
+  const orbs=[{x:pf[1].x+pf[1].w*.5,y:pf[1].y-12},{x:pf[2].x+pf[2].w*.5,y:pf[2].y-12},{x:pf[3].x+pf[3].w*.5,y:pf[3].y-12},{x:pf[4].x+pf[4].w*.5,y:pf[4].y-12},{x:pf[5].x+pf[5].w*.5,y:pf[5].y-12},{x:pf[6].x+pf[6].w*.5,y:pf[6].y-12}].map(o=>({...o,col:false}));
+  const lights=[{x:W*.15,y:2,a:Math.PI*.6,sw:.5,sp:.007,rt:0},{x:W*.55,y:2,a:Math.PI*.4,sw:.48,sp:-.008,rt:Math.PI},{x:W*.85,y:2,a:Math.PI*.5,sw:.42,sp:.01,rt:Math.PI*.5}];
+  const guards=[{x:W*.3,y:H-22,vx:1.2,spot:false},{x:W*.72,y:H-22,vx:-1.0,spot:false}];
+  const pl={x:W*.08,y:H-90,vx:0,vy:0,w:10,h:20,onGround:false,jumps:0};
+  const effects=[];
+  const keys={};let jumpHeld=false;
+  const kd=e=>{keys[e.key]=true;if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))e.preventDefault();};
+  const ku=e=>{keys[e.key]=false;};
+  window.addEventListener('keydown',kd);window.addEventListener('keyup',ku);
+  function restart(){pl.x=W*.08;pl.y=H-90;pl.vx=0;pl.vy=0;pl.onGround=false;pl.jumps=0;score=0;lives=3;gameOver=false;detected=0;effects.length=0;orbs.forEach(o=>o.col=false);}
+  canvas.addEventListener('click',()=>{if(gameOver)restart();});
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min((now-last)/1000,.04);last=now;gt+=dt;if(detected>0)detected-=dt;detFlash-=dt;
+    if(!gameOver){
+      pl.vx=0;if(keys['ArrowLeft']||keys['a'])pl.vx=-3.5;if(keys['ArrowRight']||keys['d'])pl.vx=3.5;
+      const wj=keys[' ']||keys['ArrowUp']||keys['w'];
+      if(wj&&!jumpHeld&&pl.jumps<1){pl.vy=-11;pl.jumps++;jumpHeld=true;}if(!wj)jumpHeld=false;
+      pl.vy+=.55;pl.x+=pl.vx;pl.y+=pl.vy;pl.onGround=false;
+      pf.forEach(p=>{if(pl.x+pl.w/2>p.x&&pl.x-pl.w/2<p.x+p.w&&pl.y+pl.h>p.y&&pl.y+pl.h<p.y+16&&pl.vy>=0){pl.y=p.y-pl.h;pl.vy=0;pl.onGround=true;pl.jumps=0;}});
+      pl.x=Math.max(pl.w/2,Math.min(W-pl.w/2,pl.x));
+      if(pl.y>H+40){lives--;pl.x=W*.08;pl.y=H-90;pl.vy=0;if(lives<=0)gameOver=true;}
+      orbs.filter(o=>!o.col).forEach(o=>{if(Math.abs(o.x-pl.x)<18&&Math.abs(o.y-pl.y)<22){o.col=true;score+=10;effects.push({x:o.x,y:o.y,txt:'+10',life:1,col:'#a78bfa'});}});
+      guards.forEach(g=>{g.x+=g.vx;if(g.x<40||g.x>W-40)g.vx*=-1;g.spot=Math.abs(g.x-pl.x)<80&&Math.abs(g.y-pl.y)<70;if(g.spot&&detected<=0){detected=1.5;detFlash=.4;lives--;effects.push({x:pl.x,y:pl.y-24,txt:'SPOTTED!',life:1.5,col:'#ef4444'});if(lives<=0)gameOver=true;}});
+      lights.forEach(l=>{l.rt+=l.sp;l.a=Math.PI*.5+Math.sin(l.rt)*l.sw;const dx=pl.x-l.x,dy=pl.y-l.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<H*.72){const ang=Math.atan2(dy,dx),diff=Math.abs(((ang-l.a)+Math.PI*3)%(Math.PI*2)-Math.PI);if(diff<.33&&detected<=0){detected=1.5;detFlash=.4;lives--;effects.push({x:pl.x,y:pl.y-26,txt:'DETECTED!',life:1.5,col:'#ef4444'});if(lives<=0)gameOver=true;}}});
+    }
+    for(let i=effects.length-1;i>=0;i--){effects[i].y-=.5;effects[i].life-=dt*.7;if(effects[i].life<=0)effects.splice(i,1);}
+    // Draw
+    ctx.fillStyle='#04000f';ctx.fillRect(0,0,W,H);
+    lights.forEach(l=>{const g=ctx.createRadialGradient(l.x,l.y,0,l.x,l.y,H*.72);g.addColorStop(0,'rgba(255,240,130,.22)');g.addColorStop(1,'rgba(255,240,130,0)');ctx.save();ctx.beginPath();ctx.moveTo(l.x,l.y);ctx.arc(l.x,l.y,H*.72,l.a-.33,l.a+.33);ctx.closePath();ctx.fillStyle=g;ctx.fill();ctx.restore();ctx.save();ctx.shadowBlur=14;ctx.shadowColor='#fef08a';ctx.fillStyle='#fef08a';ctx.beginPath();ctx.arc(l.x,l.y,5,0,Math.PI*2);ctx.fill();ctx.restore();});
+    pf.forEach(p=>{ctx.fillStyle='rgba(38,0,68,.9)';ctx.fillRect(p.x,p.y,p.w,H-p.y);ctx.fillStyle='rgba(167,139,250,.5)';ctx.fillRect(p.x,p.y,p.w,2);});
+    orbs.filter(o=>!o.col).forEach(o=>{const pp=.6+.4*Math.sin(gt*3+o.x);ctx.save();ctx.shadowBlur=14*pp;ctx.shadowColor='#a78bfa';ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(o.x,o.y,6,0,Math.PI*2);ctx.fill();ctx.restore();});
+    guards.forEach(g=>{ctx.save();ctx.shadowBlur=g.spot?18:6;ctx.shadowColor=g.spot?'#ef4444':'#fef08a';ctx.fillStyle=g.spot?'#ef4444':'#fbbf24';ctx.fillRect(g.x-5,g.y-20,10,20);ctx.fillStyle=g.spot?'#fca5a5':'#fde68a';ctx.beginPath();ctx.arc(g.x,g.y-26,6,0,Math.PI*2);ctx.fill();ctx.restore();});
+    const inL=detected>0,flash2=detFlash>0&&Math.sin(gt*25)>0;
+    ctx.save();ctx.shadowBlur=inL?18:14;ctx.shadowColor=inL?'#ef4444':'#7c3aed';ctx.fillStyle=flash2?'rgba(239,68,68,.3)':(inL?'#ef4444':'#a78bfa');ctx.fillRect(pl.x-pl.w/2,pl.y-pl.h,pl.w,pl.h);ctx.restore();
+    ctx.save();ctx.shadowBlur=10;ctx.shadowColor=inL?'#ef4444':'#7c3aed';ctx.fillStyle=inL?'#fca5a5':'#c4b5fd';ctx.beginPath();ctx.arc(pl.x,pl.y-pl.h-7,7,0,Math.PI*2);ctx.fill();ctx.restore();
+    effects.forEach(ef=>{ctx.save();ctx.globalAlpha=Math.min(1,ef.life);ctx.fillStyle=ef.col;ctx.font='bold 13px Rajdhani,monospace';ctx.textAlign='center';ctx.shadowBlur=8;ctx.shadowColor=ef.col;ctx.fillText(ef.txt,ef.x,ef.y);ctx.textAlign='left';ctx.restore();});
+    if(detected>0){ctx.save();ctx.globalAlpha=Math.min(.15,detected*.1);ctx.fillStyle='#dc2626';ctx.fillRect(0,0,W,H);ctx.restore();}
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,32);ctx.fillStyle='#d4a843';ctx.font='bold 13px Rajdhani,monospace';ctx.fillText('SCORE: '+score,12,21);ctx.textAlign='center';ctx.fillText("SHADOW'S KEEP",W/2,21);ctx.textAlign='left';for(let i=0;i<3;i++){ctx.fillStyle=i<lives?'#a78bfa':'rgba(167,139,250,.2)';ctx.beginPath();ctx.arc(W-18-i*20,16,7,0,Math.PI*2);ctx.fill();}
+    if(gameOver){ctx.fillStyle='rgba(0,0,0,.78)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.shadowBlur=25;ctx.shadowColor='#ef4444';ctx.fillStyle='#ef4444';ctx.font=`bold ${Math.min(42,W*.08)}px 'Cinzel Decorative',serif`;ctx.fillText('CAUGHT!',W/2,H/2-50);ctx.shadowBlur=0;ctx.fillStyle='#a78bfa';ctx.font=`${Math.min(20,W*.04)}px 'Cinzel',serif`;ctx.fillText('SCORE: '+score,W/2,H/2+8);ctx.fillStyle='#10b981';ctx.font=`${Math.min(15,W*.03)}px 'Cinzel',serif`;ctx.fillText('[ CLICK TO RESTART ]',W/2,H/2+52);ctx.textAlign='left';ctx.shadowBlur=0;}
+    if(gt<5&&!gameOver){ctx.save();ctx.globalAlpha=Math.min(1,(5-gt)/1.5);ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(W/2-170,H-40,340,28);ctx.fillStyle='#a78bfa';ctx.font='12px Rajdhani';ctx.textAlign='center';ctx.fillText('← → Walk  ·  Space/↑ Jump  ·  Collect orbs  ·  Avoid lights & guards',W/2,H-21);ctx.textAlign='left';ctx.restore();}
+    animId=requestAnimationFrame(loop);
+  }
+  animId=requestAnimationFrame(loop);
+  return ()=>{cancelAnimationFrame(animId);window.removeEventListener('keydown',kd);window.removeEventListener('keyup',ku);};
+}
+
+/* ═══════════════════════════════════════
+   PLAYABLE: VERDANT FRONTIER (Builder)
+═══════════════════════════════════════ */
+function playBuilder(canvas) {
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  let wood=0,ore=0,score=0,gt=0,animId;
+  const effects=[];
+  const nodes=[
+    {x:W*.08,y:H*.3,type:'tree',amt:5,max:5,regen:0},{x:W*.08,y:H*.55,type:'tree',amt:5,max:5,regen:0},{x:W*.08,y:H*.78,type:'tree',amt:4,max:5,regen:0},
+    {x:W*.92,y:H*.3,type:'ore',amt:5,max:5,regen:0},{x:W*.92,y:H*.55,type:'ore',amt:5,max:5,regen:0},{x:W*.92,y:H*.78,type:'ore',amt:4,max:5,regen:0}
+  ];
+  const bTypes=[
+    {name:'Lumber Mill',icon:'🪚',cw:3,co:0,sc:15,col:'#10b981'},{name:'Ore Mine',icon:'⛏',cw:0,co:3,sc:15,col:'#60a5fa'},
+    {name:'Barracks',icon:'⚔️',cw:2,co:2,sc:25,col:'#f59e0b'},{name:'Watch Tower',icon:'🏰',cw:4,co:2,sc:40,col:'#a78bfa'},
+    {name:'Market',icon:'🪙',cw:2,co:4,sc:40,col:'#fbbf24'},{name:'Fortress',icon:'🛡️',cw:5,co:5,sc:80,col:'#d4a843'}
+  ];
+  const bCols=3,bRows=2,bW=Math.floor((W*.54)/bCols),bH=Math.floor((H*.58)/bRows),bOX=W*.23,bOY=H*.2;
+  const builds=[];
+  for(let r=0;r<bRows;r++)for(let c=0;c<bCols;c++){const idx=r*bCols+c;builds.push({x:bOX+c*(bW+8),y:bOY+r*(bH+10),w:bW,h:bH,bt:bTypes[idx],built:false,prog:0});}
+  let regenT=0;
+  const onClick=e=>{
+    const rc=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rc.left)*(W/rc.width),my=(e.clientY-rc.top)*(H/rc.height);
+    nodes.forEach(n=>{if(n.amt>0&&Math.hypot(mx-n.x,my-n.y)<28){n.amt--;if(n.type==='tree'){wood++;effects.push({x:n.x,y:n.y-18,txt:'+1 Wood',life:1.2,col:'#10b981'});}else{ore++;effects.push({x:n.x,y:n.y-18,txt:'+1 Ore',life:1.2,col:'#60a5fa'});}n.regen=7;}});
+    builds.forEach(b=>{if(!b.built&&mx>b.x&&mx<b.x+b.w&&my>b.y&&my<b.y+b.h){const bt=b.bt;if(wood>=bt.cw&&ore>=bt.co){wood-=bt.cw;ore-=bt.co;b.built=true;b.prog=0;score+=bt.sc;effects.push({x:b.x+b.w/2,y:b.y-6,txt:`+${bt.sc} ${bt.name}!`,life:2,col:bt.col});}else{effects.push({x:b.x+b.w/2,y:b.y-6,txt:`Need ${bt.cw}🪵 ${bt.co}⛏`,life:1.5,col:'#ef4444'});}}});
+  };
+  canvas.addEventListener('click',onClick);
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min((now-last)/1000,.04);last=now;gt+=dt;regenT+=dt;
+    nodes.forEach(n=>{if(n.regen>0){n.regen-=dt;if(n.regen<=0&&n.amt<n.max)n.amt++;}});
+    if(regenT>9){regenT=0;nodes.forEach(n=>{if(n.amt<n.max)n.amt++;});}
+    builds.forEach(b=>{if(b.built&&b.prog<1.5)b.prog+=dt;});
+    for(let i=effects.length-1;i>=0;i--){effects[i].y-=.4;effects[i].life-=dt*.55;if(effects[i].life<=0)effects.splice(i,1);}
+    // Draw
+    ctx.fillStyle='#010d00';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(16,185,129,.07)';ctx.lineWidth=.6;
+    const G=20;for(let x=0;x<=W;x+=G){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=G){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    builds.forEach(b=>{const bt=b.bt,af=wood>=bt.cw&&ore>=bt.co;if(b.built){const done=b.prog>=1.5;ctx.save();ctx.shadowBlur=done?18:6;ctx.shadowColor=bt.col;ctx.fillStyle=done?bt.col+'22':'rgba(255,255,255,.04)';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle=done?bt.col:'rgba(255,255,255,.18)';ctx.lineWidth=1.5;ctx.strokeRect(b.x,b.y,b.w,b.h);ctx.restore();if(!done){ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(b.x,b.y+b.h-5,b.w,5);ctx.fillStyle=bt.col;ctx.fillRect(b.x,b.y+b.h-5,b.w*(b.prog/1.5),5);}ctx.font=`${Math.min(b.h*.38,28)}px serif`;ctx.textAlign='center';ctx.fillStyle=done?bt.col:'rgba(255,255,255,.7)';ctx.fillText(bt.icon,b.x+b.w/2,b.y+b.h*.62);ctx.fillStyle='rgba(255,255,255,.8)';ctx.font=`${Math.min(11,b.w*.09)}px Rajdhani,monospace`;ctx.fillText(bt.name,b.x+b.w/2,b.y+b.h-.7*12);ctx.textAlign='left';}else{ctx.fillStyle=af?'rgba(212,168,67,.07)':'rgba(255,255,255,.03)';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle=af?'rgba(212,168,67,.45)':'rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.strokeRect(b.x,b.y,b.w,b.h);ctx.font=`${Math.min(b.h*.34,24)}px serif`;ctx.textAlign='center';ctx.fillStyle=af?'#d4a843':'rgba(255,255,255,.3)';ctx.fillText(bt.icon,b.x+b.w/2,b.y+b.h*.56);ctx.fillStyle=af?'#d4a843':'rgba(255,255,255,.3)';ctx.font=`${Math.min(10,b.w*.085)}px Rajdhani,monospace`;ctx.fillText(bt.name,b.x+b.w/2,b.y+b.h-24);const cs=(bt.cw?`${bt.cw}🪵`:'')+' '+(bt.co?`${bt.co}⛏`:'');ctx.fillText(cs.trim(),b.x+b.w/2,b.y+b.h-10);ctx.textAlign='left';}});
+    nodes.forEach(n=>{const p=.6+.4*Math.sin(gt*2.5+n.x),col=n.type==='tree'?'#10b981':'#60a5fa';ctx.save();ctx.shadowBlur=n.amt>0?10*p:0;ctx.shadowColor=col;ctx.fillStyle=n.amt>0?col:'rgba(128,128,128,.25)';if(n.type==='tree'){ctx.beginPath();ctx.arc(n.x,n.y-8,13,0,Math.PI*2);ctx.fill();ctx.fillStyle=n.amt>0?'#6b3a2a':'rgba(107,58,42,.3)';ctx.fillRect(n.x-3,n.y+4,6,9);}else{ctx.fillRect(n.x-11,n.y-11,22,22);}ctx.restore();for(let a=0;a<n.max;a++){ctx.fillStyle=a<n.amt?col:'rgba(128,128,128,.2)';ctx.beginPath();ctx.arc(n.x-n.max*3.5+a*7,n.y+24,2.5,0,Math.PI*2);ctx.fill();}if(n.amt>0){ctx.fillStyle='rgba(0,0,0,.75)';ctx.fillRect(n.x-14,n.y-38,28,14);ctx.fillStyle='#fff';ctx.font='10px Rajdhani';ctx.textAlign='center';ctx.fillText('CLICK',n.x,n.y-27);ctx.textAlign='left';}});
+    effects.forEach(ef=>{ctx.save();ctx.globalAlpha=Math.min(1,ef.life);ctx.fillStyle=ef.col;ctx.font='bold 12px Rajdhani,monospace';ctx.textAlign='center';ctx.shadowBlur=6;ctx.shadowColor=ef.col;ctx.fillText(ef.txt,ef.x,ef.y);ctx.textAlign='left';ctx.restore();});
+    ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(0,0,W,36);ctx.fillStyle='#10b981';ctx.font='bold 14px Rajdhani,monospace';ctx.fillText('🪵 Wood: '+wood,14,23);ctx.fillStyle='#60a5fa';ctx.fillText('⛏ Ore: '+ore,130,23);ctx.fillStyle='#d4a843';ctx.textAlign='center';ctx.fillText('SCORE: '+score,W/2,23);ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px Rajdhani';ctx.textAlign='right';ctx.fillText('Click nodes  ·  Click build slots',W-12,23);ctx.textAlign='left';
+    animId=requestAnimationFrame(loop);
+  }
+  animId=requestAnimationFrame(loop);
+  return ()=>{cancelAnimationFrame(animId);canvas.removeEventListener('click',onClick);};
+}
+</script>
+</body>
+</html>

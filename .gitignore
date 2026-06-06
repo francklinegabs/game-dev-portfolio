@@ -1,0 +1,13 @@
+# Unrelated project files
+lake_victoria.gif
+lake_victoria.py
+money_facts_reel.mp4
+money_facts_reel.py
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Netlify
+.netlify/
